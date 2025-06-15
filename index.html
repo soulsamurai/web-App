@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Расписание ТГАСУ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#1d4ed8',
+                        secondary: '#2563eb',
+                        dark: '#0f172a',
+                        light: '#f1f5f9'
+                    },
+                    fontFamily: {
+                        'sans': ['Roboto', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="min-h-screen flex flex-col">
+    <!-- Авторизация -->
+    <div id="login-page" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+        <div class="glass-card w-full max-w-md p-8 space-y-6">
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto bg-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-university text-white text-3xl"></i>
+                </div>
+                <h1 class="mt-4 text-3xl font-bold text-gray-800">ТГАСУ</h1>
+                <p class="mt-2 text-gray-600">Войдите в систему управления расписанием</p>
+            </div>
+            
+            <form id="login-form" class="space-y-4">
+                <div>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="login-email" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Введите ваш email" required>
+                    <div id="login-email-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700">Пароль</label>
+                    <input type="password" id="login-password" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Введите пароль" required>
+                    <div id="login-password-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center">
+                        <input type="checkbox" id="remember" class="h-4 w-4 text-blue-500 border-gray-300 rounded">
+                        <label for="remember" class="ml-2 text-sm text-gray-600">Запомнить меня</label>
+                    </div>
+                    
+                    <a href="#" class="text-sm text-blue-500 hover:underline">Забыли пароль?</a>
+                </div>
+                
+                <button type="submit" class="w-full bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                    Войти
+                </button>
+                
+                <div class="text-center mt-4">
+                    <p class="text-sm text-gray-600">
+                        Нет аккаунта? 
+                        <button type="button" id="go-to-register" class="text-blue-500 hover:underline font-medium">Зарегистрироваться</button>
+                    </p>
+                </div>
+            </form>
+        </div>
+        
+        <div class="mt-8 text-center text-gray-600 text-sm">
+            <p>© 2024 Томский Государственный Архитектурно-Строительный Университет</p>
+            <p class="mt-2">Система управления учебным расписанием</p>
+        </div>
+    </div>
+    
+    <!-- Регистрация -->
+    <div id="register-page" class="min-h-screen flex flex-col justify-center items-center bg-gradient-to-br from-blue-50 to-indigo-100 p-4 hidden">
+        <div class="glass-card w-full max-w-md p-8 space-y-6">
+            <div class="text-center">
+                <div class="w-20 h-20 mx-auto bg-blue-500 rounded-lg flex items-center justify-center">
+                    <i class="fas fa-user-plus text-white text-3xl"></i>
+                </div>
+                <h1 class="mt-4 text-3xl font-bold text-gray-800">Регистрация</h1>
+                <p class="mt-2 text-gray-600">Создайте аккаунт для доступа к системе</p>
+            </div>
+            
+            <form id="register-form" class="space-y-4">
+                <div>
+                    <label for="register-name" class="block text-sm font-medium text-gray-700">Имя</label>
+                    <input type="text" id="register-name" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Введите ваше имя" required>
+                    <div id="register-name-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div>
+                    <label for="register-surname" class="block text-sm font-medium text-gray-700">Фамилия</label>
+                    <input type="text" id="register-surname" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Введите вашу фамилию" required>
+                    <div id="register-surname-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div>
+                    <label for="register-email" class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="email" id="register-email" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Введите ваш email" required>
+                    <div id="register-email-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div>
+                    <label for="register-password" class="block text-sm font-medium text-gray-700">Пароль</label>
+                    <input type="password" id="register-password" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Создайте пароль" required>
+                    <div id="register-password-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div>
+                    <label for="register-confirm" class="block text-sm font-medium text-gray-700">Повторите пароль</label>
+                    <input type="password" id="register-confirm" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" placeholder="Подтвердите пароль" required>
+                    <div id="register-confirm-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                </div>
+                
+                <div>
+                    <label for="register-role" class="block text-sm font-medium text-gray-700">Роль</label>
+                    <select id="register-role" class="mt-1 w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none" required>
+                        <option value="student">Студент</option>
+                        <option value="teacher">Преподаватель</option>
+                    </select>
+                </div>
+                
+                <div class="flex items-center">
+                    <input type="checkbox" id="terms" class="h-4 w-4 text-blue-500 border-gray-300 rounded" required>
+                    <label for="terms" class="ml-2 text-sm text-gray-600">Я согласен с условиями использования</label>
+                </div>
+                <div id="terms-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                
+                <div class="flex gap-4">
+                    <button type="button" id="back-to-login" class="flex-1 text-center border border-gray-300 text-gray-700 py-2 px-4 rounded-lg hover:bg-gray-100">
+                        Назад
+                    </button>
+                    <button type="submit" class="flex-1 bg-blue-500 text-white py-2 px-4 rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50">
+                        Регистрация
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Главное приложение -->
+    <div id="app" class="min-h-screen flex flex-col hidden">
+        <!-- Навигационная панель -->
+        <nav class="dashboard-nav text-white shadow-lg">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div class="flex justify-between h-16">
+                    <div class="flex items-center">
+                        <div class="flex-shrink-0 flex items-center">
+                            <i class="fas fa-university text-2xl mr-2"></i>
+                            <span class="text-xl font-bold">ТГАСУ Расписание</span>
+                        </div>
+                        <div class="hidden md:ml-10 md:flex md:items-center md:space-x-4">
+                            <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium" data-tab="schedule">Расписание</a>
+                            <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium" data-tab="consultations">Консультации</a>
+                            <a href="#" class="nav-link px-3 py-2 rounded-md text-sm font-medium" data-tab="exams">Экзамены</a>
+                            <a href="#" id="admin-link" class="nav-link px-3 py-2 rounded-md text-sm font-medium hidden" data-tab="admin">Администратор</a>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center">
+                        <div class="relative mr-4 hidden md:block">
+                            <button class="text-gray-200 hover:text-white relative" id="notifications-btn">
+                                <i class="fas fa-bell text-xl"></i>
+                                <span class="notification-dot hidden"></span>
+                            </button>
+                            <!-- Выпадающее меню уведомлений -->
+                            <div id="notifications-menu" class="hidden origin-top-right absolute right-0 mt-2 w-80 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                                <div class="py-2 px-4 bg-blue-500 text-white rounded-t-md">
+                                    <h3 class="text-sm font-medium">Уведомления</h3>
+                                </div>
+                                <div class="py-2 max-h-96 overflow-y-auto" id="notifications-list">
+                                    <!-- Уведомления будут загружены динамически -->
+                                </div>
+                                <div id="show-all-notifications" class="py-2 px-4 bg-gray-50 text-center rounded-b-md hidden">
+                                    <a href="#" class="text-xs text-blue-500 hover:underline">Показать все уведомления</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="ml-3 relative">
+                            <div class="flex items-center space-x-2 cursor-pointer" id="user-profile-btn">
+                                <img class="h-8 w-8 rounded-full" src="https://randomuser.me/api/portraits/men/1.jpg" alt="User">
+                                <div class="hidden md:block">
+                                    <span class="text-sm font-medium" id="user-display-name">Пользователь</span>
+                                </div>
+                            </div>
+                            
+                            <!-- Выпадающее меню -->
+                            <div id="user-menu" class="hidden origin-top-right absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-white ring-1 ring-black ring-opacity-5 z-50">
+                                <div class="py-1" role="menu">
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" id="profile-link">Профиль</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" id="settings-link">Настройки</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100" role="menuitem" id="logout-btn">Выйти</a>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <!-- Мобильное меню -->
+                        <button class="ml-4 md:hidden" id="mobile-menu-btn">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Мобильное меню (скрытое) -->
+            <div class="mobile-menu absolute top-0 left-0 h-screen w-64 bg-white shadow-lg z-50 md:hidden">
+                <div class="p-4 border-b flex items-center bg-blue-500 text-white">
+                    <img class="h-10 w-10 rounded-full mr-3" src="https://randomuser.me/api/portraits/men/1.jpg" alt="User">
+                    <span class="text-sm font-medium" id="mobile-user-name">Пользователь</span>
+                    <button class="ml-auto" id="close-mobile-menu">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+                <div class="py-4">
+                    <a href="#" class="mobile-nav-link block px-4 py-2 text-gray-700 hover:bg-gray-100" data-tab="schedule">
+                        <i class="fas fa-calendar mr-3"></i>Расписание
+                    </a>
+                    <a href="#" class="mobile-nav-link block px-4 py-2 text-gray-700 hover:bg-gray-100" data-tab="consultations">
+                        <i class="fas fa-comments mr-3"></i>Консультации
+                    </a>
+                    <a href="#" class="mobile-nav-link block px-4 py-2 text-gray-700 hover:bg-gray-100" data-tab="exams">
+                        <i class="fas fa-file-alt mr-3"></i>Экзамены
+                    </a>
+                    <a href="#" id="admin-link-mobile" class="mobile-nav-link block px-4 py-2 text-gray-700 hover:bg-gray-100 hidden" data-tab="admin">
+                        <i class="fas fa-cog mr-3"></i>Администратор
+                    </a>
+                    <div class="border-t mt-4 pt-4">
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" id="mobile-profile-link">
+                            <i class="fas fa-user mr-3"></i>Профиль
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" id="mobile-settings-link">
+                            <i class="fas fa-cog mr-3"></i>Настройки
+                        </a>
+                        <a href="#" class="block px-4 py-2 text-gray-700 hover:bg-gray-100" id="mobile-logout-btn">
+                            <i class="fas fa-sign-out-alt mr-3"></i>Выйти
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </nav>
+        
+        <!-- Основное содержимое -->
+        <div class="flex-1 flex max-w-7xl mx-auto w-full p-4">
+            <!-- Контент страницы -->
+            <div class="w-full">
+                <!-- Расписание -->
+                <div id="schedule-page" class="page-content space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Расписание занятий</h2>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm" id="print-schedule">
+                                <i class="fas fa-print mr-1"></i> Печать
+                            </button>
+                            <button class="px-3 py-1 bg-blue-500 text-white rounded-md text-sm" id="export-schedule">
+                                <i class="fas fa-download mr-1"></i> Экспорт
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Фильтры расписания (только для студентов) -->
+                    <div id="schedule-filters" class="glass-card p-4 rounded-lg hidden">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div>
+                                <label for="faculty-select" class="block text-sm font-medium text-gray-700 mb-1">Факультет</label>
+                                <select id="faculty-select" class="w-full p-2 border rounded-lg">
+                                    <option value="">Выберите факультет</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label for="group-select" class="block text-sm font-medium text-gray-700 mb-1">Группа</label>
+                                <select id="group-select" class="w-full p-2 border rounded-lg" disabled>
+                                    <option value="">Сначала выберите факультет</option>
+                                </select>
+                            </div>
+                            <div class="flex items-end">
+                                <button id="apply-filters" class="w-full p-2 bg-blue-500 text-white rounded-lg">
+                                    <i class="fas fa-filter mr-2"></i>Применить фильтры
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Навигация по неделям -->
+                    <div class="flex justify-between items-center mb-4">
+                        <div class="flex items-center gap-4">
+                            <button class="px-4 py-2 text-blue-500 rounded-md text-sm hover:bg-blue-50" id="prev-week">
+                                <i class="fas fa-chevron-left mr-1"></i>Предыдущая неделя
+                            </button>
+                            <div class="text-center">
+                                <div class="text-lg font-semibold text-gray-800" id="current-week-display">
+                                    <!-- Дата недели будет загружена динамически -->
+                                </div>
+                                <div class="text-sm text-gray-600" id="week-type-display">
+                                    <!-- Тип недели будет загружен динамически -->
+                                </div>
+                            </div>
+                            <button class="px-4 py-2 text-blue-500 rounded-md text-sm hover:bg-blue-50" id="next-week">
+                                Следующая неделя<i class="fas fa-chevron-right ml-1"></i>
+                            </button>
+                        </div>
+                        
+                        <button class="px-3 py-2 bg-gray-100 text-gray-700 rounded-md text-sm" id="current-week-btn">
+                            <i class="fas fa-calendar-day mr-1"></i>Текущая неделя
+                        </button>
+                    </div>
+                    
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse" id="schedule-table">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Время</th>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Понедельник</th>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Вторник</th>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Среда</th>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Четверг</th>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Пятница</th>
+                                    <th class="bg-gray-100 p-2 text-gray-700 text-center border">Суббота</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <!-- Данные расписания будут загружены динамически -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Консультации -->
+                <div id="consultations-page" class="page-content space-y-6 hidden">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Консультации</h2>
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-md" id="add-consultation-btn">
+                            <i class="fas fa-plus mr-2"></i>Добавить консультацию
+                        </button>
+                    </div>
+                    
+                    <!-- Форма добавления -->
+                    <div id="add-consultation-form" class="hidden glass-card p-6 mb-6">
+                        <h3 class="text-lg font-medium mb-4">Новая консультация</h3>
+                        <form id="consultation-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="consultation-date" class="block text-sm font-medium text-gray-700 mb-1">Дата</label>
+                                <input type="date" id="consultation-date" class="w-full p-2 border rounded-lg" required>
+                                <div id="consultation-date-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="consultation-time" class="block text-sm font-medium text-gray-700 mb-1">Время</label>
+                                <input type="time" id="consultation-time" class="w-full p-2 border rounded-lg" required>
+                                <div id="consultation-time-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="consultation-subject" class="block text-sm font-medium text-gray-700 mb-1">Дисциплина</label>
+                                <select id="consultation-subject" class="w-full p-2 border rounded-lg" required>
+                                    <option value="">Выберите дисциплину</option>
+                                    <option value="Строительная механика">Строительная механика</option>
+                                    <option value="Архитектурное проектирование">Архитектурное проектирование</option>
+                                    <option value="Геодезия">Геодезия</option>
+                                    <option value="Строительные материалы">Строительные материалы</option>
+                                </select>
+                                <div id="consultation-subject-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="consultation-room" class="block text-sm font-medium text-gray-700 mb-1">Аудитория</label>
+                                <div class="flex">
+                                    <select id="consultation-room" class="w-full p-2 border rounded-lg" required>
+                                        <option value="">Выберите аудиторию</option>
+                                        <option value="301">301</option>
+                                        <option value="321">321</option>
+                                        <option value="210">210</option>
+                                        <option value="115">115</option>
+                                        <option value="405">405</option>
+                                        <option value="101">101</option>
+                                    </select>
+                                    <button type="button" class="ml-2 px-3 bg-gray-200 rounded-md" id="check-room-btn">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                                <div id="consultation-room-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="consultation-teacher" class="block text-sm font-medium text-gray-700 mb-1">Преподаватель</label>
+                                <input type="text" id="consultation-teacher" class="w-full p-2 border rounded-lg" readonly>
+                            </div>
+                            <div>
+                                <label for="consultation-groups" class="block text-sm font-medium text-gray-700 mb-1">Группы</label>
+                                <input type="text" id="consultation-groups" placeholder="Введите группы через запятую" class="w-full p-2 border rounded-lg" required>
+                                <div id="consultation-groups-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label for="consultation-comment" class="block text-sm font-medium text-gray-700 mb-1">Комментарий</label>
+                                <textarea id="consultation-comment" class="w-full p-2 border rounded-lg" rows="2"></textarea>
+                            </div>
+                            <div class="md:col-span-2 flex justify-end mt-4 gap-2">
+                                <button type="button" id="cancel-consultation-btn" class="px-4 py-2 bg-gray-200 rounded-md">Отмена</button>
+                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Добавить</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Список консультаций -->
+                    <div id="consultations-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <!-- Данные консультаций будут загружены динамически -->
+                    </div>
+                </div>
+                
+                <!-- Экзамены -->
+                <div id="exams-page" class="page-content space-y-6 hidden">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Экзамены</h2>
+                        <button class="px-4 py-2 bg-blue-500 text-white rounded-md" id="add-exam-btn">
+                            <i class="fas fa-plus mr-2"></i>Добавить экзамен
+                        </button>
+                    </div>
+                    
+                    <!-- Форма добавления -->
+                    <div id="add-exam-form" class="hidden glass-card p-6 mb-6">
+                        <h3 class="text-lg font-medium mb-4">Новый экзамен</h3>
+                        <form id="exam-form" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label for="exam-date" class="block text-sm font-medium text-gray-700 mb-1">Дата</label>
+                                <input type="date" id="exam-date" class="w-full p-2 border rounded-lg" required>
+                                <div id="exam-date-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="exam-time" class="block text-sm font-medium text-gray-700 mb-1">Время</label>
+                                <input type="time" id="exam-time" class="w-full p-2 border rounded-lg" required>
+                                <div id="exam-time-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="exam-subject" class="block text-sm font-medium text-gray-700 mb-1">Дисциплина</label>
+                                <select id="exam-subject" class="w-full p-2 border rounded-lg" required>
+                                    <option value="">Выберите дисциплину</option>
+                                    <option value="Строительная механика">Строительная механика</option>
+                                    <option value="Архитектурное проектирование">Архитектурное проектирование</option>
+                                    <option value="Геодезия">Геодезия</option>
+                                    <option value="Строительные материалы">Строительные материалы</option>
+                                </select>
+                                <div id="exam-subject-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="exam-room" class="block text-sm font-medium text-gray-700 mb-1">Аудитория</label>
+                                <div class="flex">
+                                    <select id="exam-room" class="w-full p-2 border rounded-lg" required>
+                                        <option value="">Выберите аудиторию</option>
+                                        <option value="Актовый зал">Актовый зал</option>
+                                        <option value="321">321</option>
+                                        <option value="210">210</option>
+                                        <option value="115">115</option>
+                                        <option value="405">405</option>
+                                        <option value="101">101</option>
+                                    </select>
+                                    <button type="button" class="ml-2 px-3 bg-gray-200 rounded-md" id="check-exam-room-btn">
+                                        <i class="fas fa-check"></i>
+                                    </button>
+                                </div>
+                                <div id="exam-room-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div>
+                                <label for="exam-teacher" class="block text-sm font-medium text-gray-700 mb-1">Преподаватель</label>
+                                <input type="text" id="exam-teacher" class="w-full p-2 border rounded-lg" readonly>
+                            </div>
+                            <div>
+                                <label for="exam-groups" class="block text-sm font-medium text-gray-700 mb-1">Группы</label>
+                                <input type="text" id="exam-groups" placeholder="Введите группы через запятую" class="w-full p-2 border rounded-lg" required>
+                                <div id="exam-groups-error" class="text-red-500 text-xs mt-1 hidden"></div>
+                            </div>
+                            <div class="md:col-span-2">
+                                <label class="block text-sm font-medium text-gray-700 mb-1">Форма экзамена</label>
+                                <div class="flex gap-4">
+                                    <div>
+                                        <input type="radio" id="written" name="exam-type" value="written" checked>
+                                        <label for="written" class="ml-1">Письменный</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="oral" name="exam-type" value="oral">
+                                        <label for="oral" class="ml-1">Устный</label>
+                                    </div>
+                                    <div>
+                                        <input type="radio" id="online" name="exam-type" value="online">
+                                        <label for="online" class="ml-1">Онлайн</label>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="md:col-span-2 flex justify-end mt-4 gap-2">
+                                <button type="button" id="cancel-exam-btn" class="px-4 py-2 bg-gray-200 rounded-md">Отмена</button>
+                                <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded-md">Добавить</button>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Список экзаменов -->
+                    <div class="overflow-x-auto">
+                        <table class="w-full border-collapse">
+                            <thead>
+                                <tr>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Дата</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Дисциплина</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Преподаватель</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Аудитория</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Время</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Группы</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Статус</th>
+                                    <th class="bg-gray-100 p-3 text-left text-gray-700 border">Действия</th>
+                                </tr>
+                            </thead>
+                            <tbody id="exams-table-body">
+                                <!-- Данные экзаменов будут загружены динамически -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Админ-панель -->
+                <div id="admin-page" class="page-content space-y-6 hidden">
+                    <div class="flex justify-between items-center">
+                        <h2 class="text-2xl font-bold">Административная панель</h2>
+                        <div class="flex gap-2">
+                            <button class="px-3 py-2 bg-blue-500 text-white rounded-md text-sm" id="refresh-admin-data">
+                                <i class="fas fa-sync mr-1"></i> Обновить
+                            </button>
+                            <button class="px-3 py-2 bg-green-500 text-white rounded-md text-sm" id="google-sheets-integration">
+                                <i class="fab fa-google-drive mr-1"></i> Google Таблицы
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Статистика -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="stat-card glass-card p-5 rounded-lg flex items-center">
+                            <div class="bg-blue-100 text-blue-700 p-3 rounded-full mr-4">
+                                <i class="fas fa-users text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Пользователи</p>
+                                <p class="text-2xl font-bold" id="users-count">1,254</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card glass-card p-5 rounded-lg flex items-center">
+                            <div class="bg-green-100 text-green-700 p-3 rounded-full mr-4">
+                                <i class="fas fa-graduation-cap text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Студенты</p>
+                                <p class="text-2xl font-bold" id="students-count">987</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card glass-card p-5 rounded-lg flex items-center">
+                            <div class="bg-purple-100 text-purple-700 p-3 rounded-full mr-4">
+                                <i class="fas fa-chalkboard-teacher text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Преподаватели</p>
+                                <p class="text-2xl font-bold" id="teachers-count">148</p>
+                            </div>
+                        </div>
+                        
+                        <div class="stat-card glass-card p-5 rounded-lg flex items-center">
+                            <div class="bg-red-100 text-red-700 p-3 rounded-full mr-4">
+                                <i class="fas fa-university text-xl"></i>
+                            </div>
+                            <div>
+                                <p class="text-gray-500">Занятые аудитории</p>
+                                <p class="text-2xl font-bold" id="rooms-usage">83%</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Графики -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-medium mb-4">Статистика посещаемости</h3>
+                            <div class="h-64 flex items-end space-x-4 justify-center" id="attendance-chart">
+                                <!-- Данные графика будут загружены динамически -->
+                            </div>
+                        </div>
+                        
+                        <div class="glass-card p-6 rounded-lg">
+                            <h3 class="text-lg font-medium mb-4">Распределение пользователей</h3>
+                            <div class="h-64 flex items-center justify-center" id="users-distribution">
+                                <!-- Данные графика будут загружены динамически -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Управление пользователями -->
+                    <div class="glass-card p-6 rounded-lg">
+                        <div class="flex justify-between items-center mb-4">
+                            <h3 class="text-lg font-medium">Управление пользователями</h3>
+                            <button class="px-3 py-2 bg-blue-500 text-white rounded-md text-sm" id="add-user-btn">
+                                <i class="fas fa-plus mr-1"></i> Добавить пользователя
+                            </button>
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full border-collapse">
+                                <thead>
+                                    <tr>
+                                        <th class="bg-gray-100 p-3 text-left text-gray-700 border">ID</th>
+                                        <th class="bg-gray-100 p-3 text-left text-gray-700 border">Имя</th>
+                                        <th class="bg-gray-100 p-3 text-left text-gray-700 border">Email</th>
+                                        <th class="bg-gray-100 p-3 text-left text-gray-700 border">Роль</th>
+                                        <th class="bg-gray-100 p-3 text-left text-gray-700 border">Статус</th>
+                                        <th class="bg-gray-100 p-3 text-left text-gray-700 border">Действия</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="users-table-body">
+                                    <!-- Данные пользователей будут загружены динамически -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    
+                    <!-- Интеграция с Google Таблицами -->
+                    <div class="glass-card p-6 rounded-lg">
+                        <h3 class="text-lg font-medium mb-4">Интеграция с Google Таблицами</h3>
+                        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <div class="flex-1">
+                                <p class="mb-2">Для синхронизации данных о расписании с Google Таблицей:</p>
+                                <div class="flex items-center gap-2">
+                                    <i class="fas fa-link text-gray-400"></i>
+                                    <input type="url" id="google-sheet-url" value="https://docs.google.com/spreadsheets/d/1abcde1234567890/edit" class="flex-1 p-2 border rounded-lg text-sm">
+                                </div>
+                            </div>
+                            <button class="px-4 py-2 bg-blue-500 text-white rounded-md" id="sync-google-btn">
+                                <i class="fab fa-google-drive mr-2"></i> Обновить данные
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Модальные окна -->
+    <div id="modal-overlay" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center">
+        <div id="modal-container" class="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 transform transition-all">
+            <div id="modal-header" class="px-6 py-4 border-b">
+                <h3 class="text-lg font-medium" id="modal-title">Заголовок модального окна</h3>
+            </div>
+            <div id="modal-content" class="px-6 py-4">
+                <!-- Содержимое модального окна -->
+            </div>
+            <div id="modal-footer" class="px-6 py-4 border-t flex justify-end gap-2">
+                <button id="modal-cancel" class="px-4 py-2 bg-gray-200 rounded-md">Отмена</button>
+                <button id="modal-confirm" class="px-4 py-2 bg-blue-500 text-white rounded-md">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Уведомления -->
+    <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
+    
+    <!-- Скрипты -->
+    <script src="js/utils.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/ui.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
