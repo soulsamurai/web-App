@@ -74,7 +74,7 @@
         </div>
         
         <div class="mt-8 text-center text-gray-600 text-sm">
-            <p>© Томский Государственный Архитектурно-Строительный Университет</p>
+            <p>© 2024 Томский Государственный Архитектурно-Строительный Университет</p>
             <p class="mt-2">Система управления учебным расписанием</p>
         </div>
     </div>
@@ -662,10 +662,3636 @@
     <div id="toast-container" class="fixed bottom-4 right-4 z-50"></div>
     
     <!-- Скрипты -->
-    <script src="utils.js"></script>
-    <script src="auth.js"></script>
-    <script src="data.js"></script>
-    <script src="ui.js"></script>
-    <script src="app.js"></script>
+    <script>
+        /**
+ * Утилиты для работы с приложением
+ */
+
+/**
+ * Генерирует уникальный ID
+ */
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+/**
+ * Сохраняет данные в localStorage
+ */
+function setStorageItem(key, value) {
+    try {
+        localStorage.setItem(key, JSON.stringify(value));
+    } catch (error) {
+        console.error('Ошибка сохранения в localStorage:', error);
+    }
+}
+
+/**
+ * Получает данные из localStorage
+ */
+function getStorageItem(key, defaultValue = null) {
+    try {
+        const item = localStorage.getItem(key);
+        return item ? JSON.parse(item) : defaultValue;
+    } catch (error) {
+        console.error('Ошибка чтения из localStorage:', error);
+        return defaultValue;
+    }
+}
+
+/**
+ * Удаляет данные из localStorage
+ */
+function removeStorageItem(key) {
+    try {
+        localStorage.removeItem(key);
+    } catch (error) {
+        console.error('Ошибка удаления из localStorage:', error);
+    }
+}
+
+/**
+ * Форматирует дату
+ */
+function formatDate(date, format = 'full') {
+    if (!date) return '';
+    
+    const d = new Date(date);
+    
+    if (isNaN(d.getTime())) {
+        return '';
+    }
+    
+    const options = {
+        full: {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        },
+        short: {
+            day: 'numeric',
+            month: 'short'
+        },
+        time: {
+            hour: '2-digit',
+            minute: '2-digit'
+        }
+    };
+    
+    return d.toLocaleDateString('ru-RU', options[format] || options.full);
+}
+
+/**
+ * Форматирует время
+ */
+function formatTime(date) {
+    if (!date) return '';
+    
+    const d = new Date(date);
+    
+    if (isNaN(d.getTime())) {
+        return '';
+    }
+    
+    return d.toLocaleTimeString('ru-RU', {
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+}
+
+/**
+ * Валидирует форму
+ */
+function validateForm(form) {
+    const inputs = form.querySelectorAll('input[required], select[required], textarea[required]');
+    let isValid = true;
+    
+    // Очищаем предыдущие ошибки
+    form.querySelectorAll('.text-red-500').forEach(error => {
+        error.classList.add('hidden');
+    });
+    
+    inputs.forEach(input => {
+        const value = input.value.trim();
+        const errorElement = document.getElementById(`${input.id}-error`);
+        
+        // Проверка на пустоту
+        if (!value) {
+            showFieldError(input, errorElement, 'Это поле обязательно');
+            isValid = false;
+            return;
+        }
+        
+        // Специфичные валидации
+        if (input.type === 'email') {
+            if (!isValidEmail(value)) {
+                showFieldError(input, errorElement, 'Неверный формат email');
+                isValid = false;
+                return;
+            }
+        }
+        
+        if (input.type === 'password') {
+            if (value.length < 6) {
+                showFieldError(input, errorElement, 'Пароль должен содержать минимум 6 символов');
+                isValid = false;
+                return;
+            }
+        }
+        
+        // Проверка подтверждения пароля
+        if (input.id === 'register-confirm') {
+            const passwordInput = document.getElementById('register-password');
+            if (value !== passwordInput.value) {
+                showFieldError(input, errorElement, 'Пароли не совпадают');
+                isValid = false;
+                return;
+            }
+        }
+        
+        // Проверка согласия с условиями
+        if (input.type === 'checkbox' && input.id === 'terms') {
+            if (!input.checked) {
+                const termsError = document.getElementById('terms-error');
+                if (termsError) {
+                    termsError.textContent = 'Необходимо согласиться с условиями';
+                    termsError.classList.remove('hidden');
+                }
+                isValid = false;
+                return;
+            }
+        }
+        
+        // Очищаем ошибку если поле валидно
+        if (errorElement) {
+            errorElement.classList.add('hidden');
+        }
+        input.classList.remove('border-red-500');
+        input.classList.add('border-gray-300');
+    });
+    
+    return isValid;
+}
+
+/**
+ * Показывает ошибку поля
+ */
+function showFieldError(input, errorElement, message) {
+    if (errorElement) {
+        errorElement.textContent = message;
+        errorElement.classList.remove('hidden');
+    }
+    
+    input.classList.add('border-red-500');
+    input.classList.remove('border-gray-300');
+}
+
+/**
+ * Проверяет валидность email
+ */
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+/**
+ * Показывает toast уведомление
+ */
+function showToast(message, type = 'info', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    
+    const toast = document.createElement('div');
+    toast.className = `toast-notification p-4 rounded-lg shadow-lg mb-2 transform transition-all duration-300 translate-x-full`;
+    
+    // Определяем цвет в зависимости от типа
+    let bgColor = 'bg-blue-500';
+    let icon = 'fas fa-info-circle';
+    
+    switch (type) {
+        case 'success':
+            bgColor = 'bg-green-500';
+            icon = 'fas fa-check-circle';
+            break;
+        case 'error':
+            bgColor = 'bg-red-500';
+            icon = 'fas fa-exclamation-circle';
+            break;
+        case 'warning':
+            bgColor = 'bg-yellow-500';
+            icon = 'fas fa-exclamation-triangle';
+            break;
+    }
+    
+    toast.className += ` ${bgColor} text-white`;
+    
+    toast.innerHTML = `
+        <div class="flex items-center">
+            <i class="${icon} mr-2"></i>
+            <span>${message}</span>
+            <button class="ml-4 text-white hover:text-gray-200" onclick="this.parentElement.parentElement.remove()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    `;
+    
+    container.appendChild(toast);
+    
+    // Анимация появления
+    setTimeout(() => {
+        toast.classList.remove('translate-x-full');
+    }, 100);
+    
+    // Автоматическое удаление
+    setTimeout(() => {
+        toast.classList.add('translate-x-full');
+        setTimeout(() => {
+            if (toast.parentElement) {
+                toast.remove();
+            }
+        }, 300);
+    }, duration);
+}
+
+/**
+ * Показывает модальное окно
+ */
+function showModal(title, content, onConfirm = null, onCancel = null, options = {}) {
+    const overlay = document.getElementById('modal-overlay');
+    const titleElement = document.getElementById('modal-title');
+    const contentElement = document.getElementById('modal-content');
+    const confirmButton = document.getElementById('modal-confirm');
+    const cancelButton = document.getElementById('modal-cancel');
+    
+    // Устанавливаем заголовок
+    titleElement.textContent = title;
+    
+    // Устанавливаем содержимое
+    if (typeof content === 'string') {
+        contentElement.innerHTML = content;
+    } else {
+        contentElement.innerHTML = '';
+        contentElement.appendChild(content);
+    }
+    
+    // Настраиваем кнопки
+    confirmButton.textContent = options.confirmText || 'Подтвердить';
+    cancelButton.textContent = options.cancelText || 'Отмена';
+    
+    if (options.confirmClass) {
+        confirmButton.className = options.confirmClass;
+    } else {
+        confirmButton.className = 'px-4 py-2 bg-blue-500 text-white rounded-md';
+    }
+    
+    // Обработчики событий
+    const handleConfirm = () => {
+        if (onConfirm) {
+            onConfirm();
+        }
+        overlay.classList.add('hidden');
+        cleanup();
+    };
+    
+    const handleCancel = () => {
+        if (onCancel) {
+            onCancel();
+        }
+        overlay.classList.add('hidden');
+        cleanup();
+    };
+    
+    const cleanup = () => {
+        confirmButton.removeEventListener('click', handleConfirm);
+        cancelButton.removeEventListener('click', handleCancel);
+    };
+    
+    confirmButton.addEventListener('click', handleConfirm);
+    cancelButton.addEventListener('click', handleCancel);
+    
+    // Закрытие по клику на overlay
+    if (options.closeOnOverlayClick !== false) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) {
+                handleCancel();
+            }
+        });
+    }
+    
+    // Показываем модальное окно
+    overlay.classList.remove('hidden');
+}
+
+/**
+ * Скрывает модальное окно
+ */
+function hideModal() {
+    const overlay = document.getElementById('modal-overlay');
+    overlay.classList.add('hidden');
+}
+
+/**
+ * Дебаунс функции
+ */
+function debounce(func, wait) {
+    let timeout;
+    return function executedFunction(...args) {
+        const later = () => {
+            clearTimeout(timeout);
+            func(...args);
+        };
+        clearTimeout(timeout);
+        timeout = setTimeout(later, wait);
+    };
+}
+
+/**
+ * Троттлинг функции
+ */
+function throttle(func, limit) {
+    let inThrottle;
+    return function() {
+        const args = arguments;
+        const context = this;
+        if (!inThrottle) {
+            func.apply(context, args);
+            inThrottle = true;
+            setTimeout(() => inThrottle = false, limit);
+        }
+    };
+}
+
+/**
+ * Копирует текст в буфер обмена
+ */
+function copyToClipboard(text) {
+    if (navigator.clipboard) {
+        navigator.clipboard.writeText(text).then(() => {
+            showToast('Скопировано в буфер обмена', 'success');
+        }).catch(() => {
+            fallbackCopyTextToClipboard(text);
+        });
+    } else {
+        fallbackCopyTextToClipboard(text);
+    }
+}
+
+/**
+ * Резервный способ копирования в буфер обмена
+ */
+function fallbackCopyTextToClipboard(text) {
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+    textArea.style.top = '0';
+    textArea.style.left = '0';
+    textArea.style.position = 'fixed';
+    
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+    
+    try {
+        document.execCommand('copy');
+        showToast('Скопировано в буфер обмена', 'success');
+    } catch (err) {
+        showToast('Не удалось скопировать', 'error');
+    }
+    
+    document.body.removeChild(textArea);
+}
+
+/**
+ * Экспортирует данные в CSV
+ */
+function exportToCSV(data, filename) {
+    if (!data || !data.length) {
+        showToast('Нет данных для экспорта', 'warning');
+        return;
+    }
+    
+    const headers = Object.keys(data[0]);
+    const csvContent = [
+        headers.join(','),
+        ...data.map(row => headers.map(header => `"${row[header] || ''}"`).join(','))
+    ].join('\n');
+    
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const link = document.createElement('a');
+    
+    if (link.download !== undefined) {
+        const url = URL.createObjectURL(blob);
+        link.setAttribute('href', url);
+        link.setAttribute('download', filename);
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        
+        showToast('Файл экспортирован', 'success');
+    } else {
+        showToast('Экспорт не поддерживается в этом браузере', 'error');
+    }
+}
+
+/**
+ * Форматирует размер файла
+ */
+function formatFileSize(bytes) {
+    if (bytes === 0) return '0 Bytes';
+    
+    const k = 1024;
+    const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+    const i = Math.floor(Math.log(bytes) / Math.log(k));
+    
+    return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+}
+
+/**
+ * Проверяет, является ли устройство мобильным
+ */
+function isMobile() {
+    return window.innerWidth <= 768;
+}
+
+/**
+ * Получает параметры URL
+ */
+function getUrlParams() {
+    const params = new URLSearchParams(window.location.search);
+    const result = {};
+    
+    for (const [key, value] of params) {
+        result[key] = value;
+    }
+    
+    return result;
+}
+
+/**
+ * Устанавливает параметр URL
+ */
+function setUrlParam(key, value) {
+    const url = new URL(window.location);
+    url.searchParams.set(key, value);
+    window.history.pushState({}, '', url);
+}
+
+/**
+ * Удаляет параметр URL
+ */
+function removeUrlParam(key) {
+    const url = new URL(window.location);
+    url.searchParams.delete(key);
+    window.history.pushState({}, '', url);
+}
+
+/**
+ * Анимирует число
+ */
+function animateNumber(element, start, end, duration = 1000) {
+    const range = end - start;
+    const increment = range / (duration / 16);
+    let current = start;
+    
+    const timer = setInterval(() => {
+        current += increment;
+        if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
+            current = end;
+            clearInterval(timer);
+        }
+        element.textContent = Math.floor(current);
+    }, 16);
+}
+
+/**
+ * Создает элемент с классами и атрибутами
+ */
+function createElement(tag, classes = [], attributes = {}, content = '') {
+    const element = document.createElement(tag);
+    
+    if (classes.length) {
+        element.className = classes.join(' ');
+    }
+    
+    Object.keys(attributes).forEach(key => {
+        element.setAttribute(key, attributes[key]);
+    });
+    
+    if (content) {
+        element.innerHTML = content;
+    }
+    
+    return element;
+}
+
+/**
+ * Плавная прокрутка к элементу
+ */
+function scrollToElement(element, offset = 0) {
+    const elementPosition = element.offsetTop - offset;
+    
+    window.scrollTo({
+        top: elementPosition,
+        behavior: 'smooth'
+    });
+}
+
+/**
+ * Проверяет видимость элемента
+ */
+function isElementInViewport(element) {
+    const rect = element.getBoundingClientRect();
+    return (
+        rect.top >= 0 &&
+        rect.left >= 0 &&
+        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+}
+
+/**
+ * Загружает изображение асинхронно
+ */
+function loadImage(src) {
+    return new Promise((resolve, reject) => {
+        const img = new Image();
+        img.onload = () => resolve(img);
+        img.onerror = reject;
+        img.src = src;
+    });
+}
+
+/**
+ * Генерирует случайный цвет
+ */
+function getRandomColor() {
+    const colors = [
+        '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
+        '#8b5cf6', '#06b6d4', '#84cc16', '#f97316'
+    ];
+    return colors[Math.floor(Math.random() * colors.length)];
+}
+
+/**
+ * Форматирует номер телефона
+ */
+function formatPhoneNumber(phone) {
+    const cleaned = phone.replace(/\D/g, '');
+    const match = cleaned.match(/^(\d{1})(\d{3})(\d{3})(\d{2})(\d{2})$/);
+    
+    if (match) {
+        return `+${match[1]} (${match[2]}) ${match[3]}-${match[4]}-${match[5]}`;
+    }
+    
+    return phone;
+}
+
+/**
+ * Проверяет поддержку localStorage
+ */
+function isLocalStorageSupported() {
+    try {
+        const test = 'test';
+        localStorage.setItem(test, test);
+        localStorage.removeItem(test);
+        return true;
+    } catch (e) {
+        return false;
+    }
+}
+    </script>
+    <script>
+        /**
+ * Модуль аутентификации
+ */
+
+// Ключи для хранения данных
+const AUTH_TOKEN_KEY = 'tgasu_auth_token';
+const CURRENT_USER_KEY = 'tgasu_current_user';
+const USERS_KEY = 'tgasu_users';
+
+// Начальные пользователи
+const initialUsers = [
+    {
+        id: 'ST001',
+        name: 'Иван',
+        surname: 'Иванов',
+        email: 'student@tgasu.ru',
+        password: 'student123',
+        role: 'student',
+        active: true,
+        faculty: 'fcs',
+        group: 'ПГС-101',
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'TE045',
+        name: 'Петр',
+        surname: 'Петров',
+        email: 'teacher@tgasu.ru',
+        password: 'teacher123',
+        role: 'teacher',
+        active: true,
+        subjects: ['Строительная механика', 'Железобетонные конструкции'],
+        createdAt: new Date().toISOString()
+    },
+    {
+        id: 'AD001',
+        name: 'Сергей',
+        surname: 'Сергеев',
+        email: 'admin@tgasu.ru',
+        password: 'admin123',
+        role: 'admin',
+        active: true,
+        createdAt: new Date().toISOString()
+    }
+];
+
+/**
+ * Инициализирует хранилище пользователей
+ */
+function initializeUsers() {
+    if (!getStorageItem(USERS_KEY)) {
+        setStorageItem(USERS_KEY, initialUsers);
+    }
+}
+
+/**
+ * Получает список всех пользователей
+ */
+function getUsers() {
+    return getStorageItem(USERS_KEY, []);
+}
+
+/**
+ * Получает пользователя по ID
+ */
+function getUserById(id) {
+    const users = getUsers();
+    return users.find(user => user.id === id) || null;
+}
+
+/**
+ * Получает пользователя по email
+ */
+function getUserByEmail(email) {
+    const users = getUsers();
+    return users.find(user => user.email === email) || null;
+}
+
+/**
+ * Добавляет нового пользователя
+ */
+function addUser(userData) {
+    const users = getUsers();
+    
+    // Проверяем, существует ли пользователь с таким email
+    if (getUserByEmail(userData.email)) {
+        throw new Error('Пользователь с таким email уже существует');
+    }
+    
+    // Валидация данных
+    if (!userData.name || !userData.surname || !userData.email || !userData.password) {
+        throw new Error('Все поля обязательны для заполнения');
+    }
+    
+    if (!isValidEmail(userData.email)) {
+        throw new Error('Неверный формат email');
+    }
+    
+    if (userData.password.length < 6) {
+        throw new Error('Пароль должен содержать минимум 6 символов');
+    }
+    
+    // Генерируем ID в зависимости от роли
+    let id;
+    const existingIds = users.map(u => u.id);
+    let counter = 1;
+    
+    switch (userData.role) {
+        case 'student':
+            do {
+                id = `ST${String(counter).padStart(3, '0')}`;
+                counter++;
+            } while (existingIds.includes(id));
+            break;
+        case 'teacher':
+            do {
+                id = `TE${String(counter).padStart(3, '0')}`;
+                counter++;
+            } while (existingIds.includes(id));
+            break;
+        case 'admin':
+            do {
+                id = `AD${String(counter).padStart(3, '0')}`;
+                counter++;
+            } while (existingIds.includes(id));
+            break;
+        default:
+            do {
+                id = `US${String(counter).padStart(3, '0')}`;
+                counter++;
+            } while (existingIds.includes(id));
+    }
+    
+    // Создаем нового пользователя
+    const newUser = {
+        id,
+        name: userData.name.trim(),
+        surname: userData.surname.trim(),
+        email: userData.email.toLowerCase().trim(),
+        password: userData.password,
+        role: userData.role || 'student',
+        active: userData.active !== undefined ? userData.active : true,
+        createdAt: new Date().toISOString()
+    };
+    
+    // Добавляем дополнительные поля в зависимости от роли
+    if (userData.role === 'student') {
+        newUser.faculty = userData.faculty || '';
+        newUser.group = userData.group || '';
+    } else if (userData.role === 'teacher') {
+        newUser.subjects = userData.subjects || [];
+    }
+    
+    // Добавляем пользователя в список
+    users.push(newUser);
+    setStorageItem(USERS_KEY, users);
+    
+    // Возвращаем пользователя без пароля
+    const { password, ...userWithoutPassword } = newUser;
+    return userWithoutPassword;
+}
+
+/**
+ * Обновляет данные пользователя
+ */
+function updateUser(id, userData) {
+    const users = getUsers();
+    const index = users.findIndex(user => user.id === id);
+    
+    if (index === -1) {
+        throw new Error('Пользователь не найден');
+    }
+    
+    // Проверяем, не занят ли email другим пользователем
+    if (userData.email) {
+        const existingUser = getUserByEmail(userData.email);
+        if (existingUser && existingUser.id !== id) {
+            throw new Error('Пользователь с таким email уже существует');
+        }
+        
+        if (!isValidEmail(userData.email)) {
+            throw new Error('Неверный формат email');
+        }
+    }
+    
+    // Валидация пароля
+    if (userData.password && userData.password.length < 6) {
+        throw new Error('Пароль должен содержать минимум 6 символов');
+    }
+    
+    // Обновляем данные пользователя
+    const updatedData = { ...userData };
+    if (updatedData.email) {
+        updatedData.email = updatedData.email.toLowerCase().trim();
+    }
+    if (updatedData.name) {
+        updatedData.name = updatedData.name.trim();
+    }
+    if (updatedData.surname) {
+        updatedData.surname = updatedData.surname.trim();
+    }
+    
+    users[index] = {
+        ...users[index],
+        ...updatedData,
+        updatedAt: new Date().toISOString()
+    };
+    
+    setStorageItem(USERS_KEY, users);
+    
+    // Возвращаем пользователя без пароля
+    const { password, ...userWithoutPassword } = users[index];
+    return userWithoutPassword;
+}
+
+/**
+ * Удаляет пользователя
+ */
+function deleteUser(id) {
+    const users = getUsers();
+    const filteredUsers = users.filter(user => user.id !== id);
+    
+    if (filteredUsers.length === users.length) {
+        return false;
+    }
+    
+    setStorageItem(USERS_KEY, filteredUsers);
+    return true;
+}
+
+/**
+ * Аутентифицирует пользователя
+ */
+function login(email, password) {
+    // Валидация входных данных
+    if (!email || !password) {
+        throw new Error('Email и пароль обязательны');
+    }
+    
+    if (!isValidEmail(email)) {
+        throw new Error('Неверный формат email');
+    }
+    
+    const user = getUserByEmail(email.toLowerCase().trim());
+    
+    if (!user || user.password !== password) {
+        throw new Error('Неверный email или пароль');
+    }
+    
+    if (!user.active) {
+        throw new Error('Учетная запись заблокирована. Обратитесь к администратору');
+    }
+    
+    // Генерируем токен
+    const token = generateToken(user);
+    
+    // Сохраняем токен и данные пользователя
+    setStorageItem(AUTH_TOKEN_KEY, token);
+    
+    // Сохраняем данные пользователя без пароля
+    const { password: _, ...userWithoutPassword } = user;
+    setStorageItem(CURRENT_USER_KEY, userWithoutPassword);
+    
+    // Обновляем время последнего входа
+    updateUser(user.id, { lastLoginAt: new Date().toISOString() });
+    
+    return {
+        token,
+        user: userWithoutPassword
+    };
+}
+
+/**
+ * Выход из системы
+ */
+function logout() {
+    removeStorageItem(AUTH_TOKEN_KEY);
+    removeStorageItem(CURRENT_USER_KEY);
+}
+
+/**
+ * Проверяет, аутентифицирован ли пользователь
+ */
+function isAuthenticated() {
+    const token = getStorageItem(AUTH_TOKEN_KEY);
+    if (!token) {
+        return false;
+    }
+    
+    try {
+        const tokenData = JSON.parse(atob(token));
+        return tokenData.exp > Date.now();
+    } catch (error) {
+        return false;
+    }
+}
+
+/**
+ * Получает текущего пользователя
+ */
+function getCurrentUser() {
+    if (!isAuthenticated()) {
+        return null;
+    }
+    
+    return getStorageItem(CURRENT_USER_KEY);
+}
+
+/**
+ * Генерирует токен для пользователя
+ */
+function generateToken(user) {
+    const tokenData = {
+        id: user.id,
+        email: user.email,
+        role: user.role,
+        exp: Date.now() + 24 * 60 * 60 * 1000 // 24 часа
+    };
+    
+    return btoa(JSON.stringify(tokenData));
+}
+
+/**
+ * Регистрирует нового пользователя
+ */
+function register(userData) {
+    // Валидация данных
+    if (!userData.name || !userData.surname || !userData.email || !userData.password) {
+        throw new Error('Все поля обязательны для заполнения');
+    }
+    
+    if (!isValidEmail(userData.email)) {
+        throw new Error('Неверный формат email');
+    }
+    
+    if (userData.password.length < 6) {
+        throw new Error('Пароль должен содержать минимум 6 символов');
+    }
+    
+    // Добавляем пользователя
+    const newUser = addUser(userData);
+    
+    // Выполняем вход
+    return login(userData.email, userData.password);
+}
+
+/**
+ * Проверяет валидность email
+ */
+function isValidEmail(email) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+}
+
+/**
+ * Проверяет права доступа пользователя
+ */
+function hasPermission(requiredRole) {
+    const user = getCurrentUser();
+    if (!user) {
+        return false;
+    }
+    
+    const roleHierarchy = {
+        'student': 1,
+        'teacher': 2,
+        'admin': 3
+    };
+    
+    return roleHierarchy[user.role] >= roleHierarchy[requiredRole];
+}
+
+/**
+ * Сброс пароля (имитация)
+ */
+function resetPassword(email) {
+    const user = getUserByEmail(email);
+    if (!user) {
+        throw new Error('Пользователь с таким email не найден');
+    }
+    
+    // В реальном приложении здесь была бы отправка email
+    console.log(`Ссылка для сброса пароля отправлена на ${email}`);
+    
+    return {
+        success: true,
+        message: 'Ссылка для сброса пароля отправлена на ваш email'
+    };
+}
+
+/**
+ * Изменение пароля
+ */
+function changePassword(currentPassword, newPassword) {
+    const user = getCurrentUser();
+    if (!user) {
+        throw new Error('Пользователь не авторизован');
+    }
+    
+    const fullUser = getUserById(user.id);
+    if (!fullUser || fullUser.password !== currentPassword) {
+        throw new Error('Неверный текущий пароль');
+    }
+    
+    if (newPassword.length < 6) {
+        throw new Error('Новый пароль должен содержать минимум 6 символов');
+    }
+    
+    updateUser(user.id, { password: newPassword });
+    
+    return {
+        success: true,
+        message: 'Пароль успешно изменен'
+    };
+}
+
+/**
+ * Получает статистику пользователей
+ */
+function getUsersStats() {
+    const users = getUsers();
+    
+    return {
+        total: users.length,
+        active: users.filter(u => u.active).length,
+        inactive: users.filter(u => !u.active).length,
+        students: users.filter(u => u.role === 'student').length,
+        teachers: users.filter(u => u.role === 'teacher').length,
+        admins: users.filter(u => u.role === 'admin').length,
+        recentRegistrations: users.filter(u => {
+            const createdAt = new Date(u.createdAt);
+            const weekAgo = new Date();
+            weekAgo.setDate(weekAgo.getDate() - 7);
+            return createdAt > weekAgo;
+        }).length
+    };
+}
+
+// Инициализация при загрузке
+initializeUsers();
+    </script>
+    <script>
+        /**
+ * Модуль для работы с данными приложения
+ */
+
+// Ключи для хранения данных
+const SCHEDULE_KEY = 'tgasu_schedule';
+const CONSULTATIONS_KEY = 'tgasu_consultations';
+const EXAMS_KEY = 'tgasu_exams';
+const NOTIFICATIONS_KEY = 'tgasu_notifications';
+const FACULTIES_KEY = 'tgasu_faculties';
+const GROUPS_KEY = 'tgasu_groups';
+const CURRENT_WEEK_KEY = 'tgasu_current_week';
+
+// Данные факультетов
+const initialFaculties = [
+    { id: 'ikeis', name: 'Институт кадастра, экономики и инженерных систем в строительстве' },
+    { id: 'fmt', name: 'Факультет механических технологий' },
+    { id: 'fds', name: 'Факультет дорожного строительства' },
+    { id: 'fcs', name: 'Факультет гражданского строительства' },
+    { id: 'fa', name: 'Факультет архитектуры' },
+    { id: 'ic', name: 'Институт Цтиен' }
+];
+
+// Данные групп
+const initialGroups = {
+    'ikeis': [
+        { id: 'KE-101', name: 'КЭ-101' }, { id: 'KE-102', name: 'КЭ-102' }, { id: 'KE-103', name: 'КЭ-103' },
+        { id: 'KE-201', name: 'КЭ-201' }, { id: 'KE-202', name: 'КЭ-202' }, { id: 'IS-101', name: 'ИС-101' },
+        { id: 'IS-102', name: 'ИС-102' }, { id: 'IS-201', name: 'ИС-201' }, { id: 'IS-301', name: 'ИС-301' },
+        { id: 'IS-401', name: 'ИС-401' }
+    ],
+    'fmt': [
+        { id: 'MT-101', name: 'МТ-101' }, { id: 'MT-102', name: 'МТ-102' }, { id: 'MT-103', name: 'МТ-103' },
+        { id: 'MT-201', name: 'МТ-201' }, { id: 'MT-202', name: 'МТ-202' }, { id: 'MT-301', name: 'МТ-301' },
+        { id: 'MT-302', name: 'МТ-302' }, { id: 'MT-401', name: 'МТ-401' }, { id: 'MT-402', name: 'МТ-402' },
+        { id: 'MT-501', name: 'МТ-501' }
+    ],
+    'fds': [
+        { id: 'DS-101', name: 'ДС-101' }, { id: 'DS-102', name: 'ДС-102' }, { id: 'DS-103', name: 'ДС-103' },
+        { id: 'DS-201', name: 'ДС-201' }, { id: 'DS-202', name: 'ДС-202' }, { id: 'DS-301', name: 'ДС-301' },
+        { id: 'DS-302', name: 'ДС-302' }, { id: 'DS-401', name: 'ДС-401' }, { id: 'DS-402', name: 'ДС-402' },
+        { id: 'DS-501', name: 'ДС-501' }
+    ],
+    'fcs': [
+        { id: 'PGS-101', name: 'ПГС-101' }, { id: 'PGS-102', name: 'ПГС-102' }, { id: 'PGS-103', name: 'ПГС-103' },
+        { id: 'PGS-201', name: 'ПГС-201' }, { id: 'PGS-202', name: 'ПГС-202' }, { id: 'PGS-301', name: 'ПГС-301' },
+        { id: 'PGS-302', name: 'ПГС-302' }, { id: 'PGS-401', name: 'ПГС-401' }, { id: 'PGS-402', name: 'ПГС-402' },
+        { id: 'PGS-501', name: 'ПГС-501' }
+    ],
+    'fa': [
+        { id: 'ARH-101', name: 'АРХ-101' }, { id: 'ARH-102', name: 'АРХ-102' }, { id: 'ARH-103', name: 'АРХ-103' },
+        { id: 'ARH-201', name: 'АРХ-201' }, { id: 'ARH-202', name: 'АРХ-202' }, { id: 'ARH-301', name: 'АРХ-301' },
+        { id: 'ARH-302', name: 'АРХ-302' }, { id: 'ARH-401', name: 'АРХ-401' }, { id: 'ARH-402', name: 'АРХ-402' },
+        { id: 'ARH-501', name: 'АРХ-501' }
+    ],
+    'ic': [
+        { id: 'IT-101', name: 'ИТ-101' }, { id: 'IT-102', name: 'ИТ-102' }, { id: 'IT-103', name: 'ИТ-103' },
+        { id: 'IT-201', name: 'ИТ-201' }, { id: 'IT-202', name: 'ИТ-202' }, { id: 'IT-301', name: 'ИТ-301' },
+        { id: 'IT-302', name: 'ИТ-302' }, { id: 'IT-401', name: 'ИТ-401' }, { id: 'IT-402', name: 'ИТ-402' },
+        { id: 'IT-501', name: 'ИТ-501' }
+    ]
+};
+
+// Предметы по факультетам
+const subjectsByFaculty = {
+    'ikeis': ['Кадастр недвижимости', 'Экономика строительства', 'Инженерные системы', 'Геодезия', 'Правоведение'],
+    'fmt': ['Механика материалов', 'Технология машиностроения', 'Материаловедение', 'Сопротивление материалов', 'Детали машин'],
+    'fds': ['Дорожные машины', 'Строительство дорог', 'Асфальтобетон', 'Мостостроение', 'Транспортная логистика'],
+    'fcs': ['Строительная механика', 'Железобетонные конструкции', 'Технология строительства', 'Строительные материалы', 'Основания и фундаменты'],
+    'fa': ['Архитектурное проектирование', 'История архитектуры', 'Композиция', 'Строительное черчение', 'Градостроительство'],
+    'ic': ['Информационные технологии', 'Программирование', 'Базы данных', 'Компьютерная графика', 'Системный анализ']
+};
+
+// Преподаватели
+const teachers = [
+    'проф. Петров А.В.',
+    'доц. Сидорова М.И.',
+    'проф. Козлов С.П.',
+    'ст.пр. Иванов В.С.',
+    'доц. Смирнова Е.А.',
+    'проф. Волков Д.Н.',
+    'доц. Морозова Т.П.',
+    'ст.пр. Федоров К.И.',
+    'проф. Новиков Р.М.',
+    'доц. Лебедева О.С.'
+];
+
+// Временные слоты
+const timeSlots = [
+    '8:00-9:30',
+    '9:40-11:10',
+    '11:20-12:50',
+    '13:00-14:30',
+    '14:40-16:10',
+    '16:20-17:50'
+];
+
+// Типы занятий
+const lessonTypes = ['Лекция', 'Практика', 'Лабораторная'];
+
+// Аудитории
+const rooms = ['101', '102', '115', '210', '301', '321', '405', '501'];
+
+/**
+ * Генерирует расписание для всех групп всех факультетов
+ */
+function generateFullSchedule() {
+    const schedule = {};
+    
+    // Получаем текущую дату и определяем начало учебного года (1 сентября)
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const academicYearStart = new Date(currentYear, 8, 1); // 1 сентября
+    
+    // Если текущая дата до 1 сентября, то учебный год начался в прошлом году
+    if (currentDate < academicYearStart) {
+        academicYearStart.setFullYear(currentYear - 1);
+    }
+    
+    // Генерируем расписание на весь учебный год (36 недель)
+    for (let week = 0; week < 36; week++) {
+        const weekStart = new Date(academicYearStart);
+        weekStart.setDate(weekStart.getDate() + week * 7);
+        
+        // Определяем четность недели (начинаем с нечетной)
+        const isEvenWeek = week % 2 === 1;
+        const weekKey = formatWeekKey(weekStart);
+        
+        schedule[weekKey] = {
+            weekStart: weekStart.toISOString(),
+            isEven: isEvenWeek,
+            lessons: generateWeekSchedule(isEvenWeek)
+        };
+    }
+    
+    return schedule;
+}
+
+/**
+ * Генерирует расписание на одну неделю
+ */
+function generateWeekSchedule(isEvenWeek) {
+    const weekLessons = [];
+    
+    // Для каждого факультета
+    Object.keys(initialGroups).forEach(facultyId => {
+        const facultySubjects = subjectsByFaculty[facultyId];
+        const facultyGroups = initialGroups[facultyId];
+        
+        // Для каждой группы факультета
+        facultyGroups.forEach(group => {
+            // Генерируем 4-6 занятий в неделю для каждой группы
+            const lessonsPerWeek = Math.floor(Math.random() * 3) + 4; // 4-6 занятий
+            
+            for (let i = 0; i < lessonsPerWeek; i++) {
+                const day = Math.floor(Math.random() * 6); // 0-5 (Пн-Сб)
+                const timeSlot = timeSlots[Math.floor(Math.random() * timeSlots.length)];
+                const subject = facultySubjects[Math.floor(Math.random() * facultySubjects.length)];
+                const teacher = teachers[Math.floor(Math.random() * teachers.length)];
+                const type = lessonTypes[Math.floor(Math.random() * lessonTypes.length)];
+                const room = rooms[Math.floor(Math.random() * rooms.length)];
+                
+                // Проверяем, что в это время и день нет конфликта аудиторий
+                const conflictExists = weekLessons.some(lesson => 
+                    lesson.day === day && 
+                    lesson.time === timeSlot && 
+                    lesson.room === room
+                );
+                
+                if (!conflictExists) {
+                    weekLessons.push({
+                        id: generateId(),
+                        subject,
+                        type,
+                        teacher,
+                        room,
+                        building: Math.floor(Math.random() * 3) + 1, // 1-3 корпус
+                        time: timeSlot,
+                        day,
+                        faculty: facultyId,
+                        groups: [group.name],
+                        weekType: isEvenWeek ? 'even' : 'odd'
+                    });
+                }
+            }
+        });
+    });
+    
+    return weekLessons;
+}
+
+/**
+ * Форматирует ключ недели
+ */
+function formatWeekKey(date) {
+    const monday = getMonday(date);
+    return monday.toISOString().split('T')[0];
+}
+
+/**
+ * Получает понедельник для заданной даты
+ */
+function getMonday(date) {
+    const d = new Date(date);
+    const day = d.getDay();
+    const diff = d.getDate() - day + (day === 0 ? -6 : 1);
+    return new Date(d.setDate(diff));
+}
+
+/**
+ * Инициализирует хранилище данных
+ */
+function initializeData() {
+    if (!getStorageItem(SCHEDULE_KEY)) {
+        const fullSchedule = generateFullSchedule();
+        setStorageItem(SCHEDULE_KEY, fullSchedule);
+    }
+    
+    if (!getStorageItem(CONSULTATIONS_KEY)) {
+        setStorageItem(CONSULTATIONS_KEY, []);
+    }
+    
+    if (!getStorageItem(EXAMS_KEY)) {
+        setStorageItem(EXAMS_KEY, []);
+    }
+    
+    if (!getStorageItem(NOTIFICATIONS_KEY)) {
+        setStorageItem(NOTIFICATIONS_KEY, []);
+    }
+    
+    if (!getStorageItem(FACULTIES_KEY)) {
+        setStorageItem(FACULTIES_KEY, initialFaculties);
+    }
+    
+    if (!getStorageItem(GROUPS_KEY)) {
+        setStorageItem(GROUPS_KEY, initialGroups);
+    }
+    
+    // Устанавливаем текущую неделю
+    if (!getStorageItem(CURRENT_WEEK_KEY)) {
+        setCurrentWeek(new Date());
+    }
+}
+
+/**
+ * Получает список факультетов
+ */
+function getFaculties() {
+    return getStorageItem(FACULTIES_KEY, initialFaculties);
+}
+
+/**
+ * Получает список групп для факультета
+ */
+function getGroupsByFaculty(facultyId) {
+    const groups = getStorageItem(GROUPS_KEY, initialGroups);
+    return groups[facultyId] || [];
+}
+
+/**
+ * Получает текущую неделю
+ */
+function getCurrentWeek() {
+    const currentWeekData = getStorageItem(CURRENT_WEEK_KEY);
+    if (currentWeekData) {
+        return new Date(currentWeekData);
+    }
+    return new Date();
+}
+
+/**
+ * Устанавливает текущую неделю
+ */
+function setCurrentWeek(date) {
+    const monday = getMonday(date);
+    setStorageItem(CURRENT_WEEK_KEY, monday.toISOString());
+}
+
+/**
+ * Получает расписание для конкретной недели
+ */
+function getScheduleForWeek(weekStart, filters = {}) {
+    const schedule = getStorageItem(SCHEDULE_KEY, {});
+    const weekKey = formatWeekKey(weekStart);
+    const weekData = schedule[weekKey];
+    
+    if (!weekData) {
+        return [];
+    }
+    
+    let lessons = weekData.lessons || [];
+    
+    // Применяем фильтры
+    if (filters.faculty || filters.group) {
+        lessons = lessons.filter(lesson => {
+            if (filters.faculty && lesson.faculty !== filters.faculty) {
+                return false;
+            }
+            if (filters.group && !lesson.groups.includes(filters.group)) {
+                return false;
+            }
+            return true;
+        });
+    }
+    
+    return lessons;
+}
+
+/**
+ * Определяет четность недели
+ */
+function isEvenWeek(date) {
+    const academicYearStart = new Date(date.getFullYear(), 8, 1); // 1 сентября
+    if (date < academicYearStart) {
+        academicYearStart.setFullYear(date.getFullYear() - 1);
+    }
+    
+    const weekNumber = Math.floor((date - academicYearStart) / (7 * 24 * 60 * 60 * 1000));
+    return weekNumber % 2 === 1;
+}
+
+/**
+ * Добавляет занятие в расписание
+ */
+function addLesson(lessonData, weekStart) {
+    const schedule = getStorageItem(SCHEDULE_KEY, {});
+    const weekKey = formatWeekKey(weekStart);
+    
+    if (!schedule[weekKey]) {
+        schedule[weekKey] = {
+            weekStart: weekStart.toISOString(),
+            isEven: isEvenWeek(weekStart),
+            lessons: []
+        };
+    }
+    
+    const newLesson = {
+        id: generateId(),
+        ...lessonData,
+        weekType: schedule[weekKey].isEven ? 'even' : 'odd'
+    };
+    
+    schedule[weekKey].lessons.push(newLesson);
+    setStorageItem(SCHEDULE_KEY, schedule);
+    
+    // Отправляем уведомления студентам
+    sendLessonNotification('add', newLesson);
+    
+    return newLesson;
+}
+
+/**
+ * Обновляет занятие в расписании
+ */
+function updateLesson(lessonId, lessonData, weekStart) {
+    const schedule = getStorageItem(SCHEDULE_KEY, {});
+    const weekKey = formatWeekKey(weekStart);
+    
+    if (!schedule[weekKey]) {
+        return null;
+    }
+    
+    const lessonIndex = schedule[weekKey].lessons.findIndex(lesson => lesson.id === lessonId);
+    if (lessonIndex === -1) {
+        return null;
+    }
+    
+    const oldLesson = { ...schedule[weekKey].lessons[lessonIndex] };
+    schedule[weekKey].lessons[lessonIndex] = {
+        ...schedule[weekKey].lessons[lessonIndex],
+        ...lessonData
+    };
+    
+    setStorageItem(SCHEDULE_KEY, schedule);
+    
+    // Отправляем уведомления студентам
+    sendLessonNotification('update', schedule[weekKey].lessons[lessonIndex], oldLesson);
+    
+    return schedule[weekKey].lessons[lessonIndex];
+}
+
+/**
+ * Удаляет занятие из расписания
+ */
+function deleteLesson(lessonId, weekStart) {
+    const schedule = getStorageItem(SCHEDULE_KEY, {});
+    const weekKey = formatWeekKey(weekStart);
+    
+    if (!schedule[weekKey]) {
+        return false;
+    }
+    
+    const lessonIndex = schedule[weekKey].lessons.findIndex(lesson => lesson.id === lessonId);
+    if (lessonIndex === -1) {
+        return false;
+    }
+    
+    const deletedLesson = schedule[weekKey].lessons[lessonIndex];
+    schedule[weekKey].lessons.splice(lessonIndex, 1);
+    setStorageItem(SCHEDULE_KEY, schedule);
+    
+    // Отправляем уведомления студентам
+    sendLessonNotification('delete', deletedLesson);
+    
+    return true;
+}
+
+/**
+ * Отправляет уведомления студентам об изменениях в расписании
+ */
+function sendLessonNotification(action, lesson, oldLesson = null) {
+    const currentUser = getCurrentUser();
+    if (!currentUser || currentUser.role !== 'teacher') {
+        return;
+    }
+    
+    let message = '';
+    let title = '';
+    
+    switch (action) {
+        case 'add':
+            title = 'Добавлено новое занятие';
+            message = `Добавлено занятие "${lesson.subject}" на ${formatDate(new Date())} в ${lesson.time}`;
+            break;
+        case 'update':
+            title = 'Изменение в расписании';
+            message = `Изменено занятие "${lesson.subject}"`;
+            if (oldLesson && oldLesson.time !== lesson.time) {
+                message += ` - время изменено с ${oldLesson.time} на ${lesson.time}`;
+            }
+            if (oldLesson && oldLesson.room !== lesson.room) {
+                message += ` - аудитория изменена с ${oldLesson.room} на ${lesson.room}`;
+            }
+            break;
+        case 'delete':
+            title = 'Занятие отменено';
+            message = `Отменено занятие "${lesson.subject}" в ${lesson.time}`;
+            break;
+    }
+    
+    // Добавляем уведомление
+    addNotification({
+        title,
+        message,
+        type: 'schedule_change',
+        lessonId: lesson.id,
+        groups: lesson.groups
+    });
+    
+    // Имитация отправки email (в реальном приложении здесь был бы API вызов)
+    console.log(`Email отправлен студентам групп ${lesson.groups.join(', ')}: ${title} - ${message}`);
+}
+
+/**
+ * Получает список консультаций
+ */
+function getConsultations() {
+    return getStorageItem(CONSULTATIONS_KEY, []);
+}
+
+/**
+ * Добавляет консультацию
+ */
+function addConsultation(consultationData) {
+    const consultations = getConsultations();
+    
+    const newConsultation = {
+        id: generateId(),
+        ...consultationData,
+        createdAt: new Date().toISOString()
+    };
+    
+    consultations.push(newConsultation);
+    consultations.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    setStorageItem(CONSULTATIONS_KEY, consultations);
+    
+    // Добавляем уведомление
+    addNotification({
+        title: 'Новая консультация',
+        message: `Добавлена консультация по предмету "${consultationData.subject}"`,
+        type: 'consultation'
+    });
+    
+    return newConsultation;
+}
+
+/**
+ * Обновляет консультацию
+ */
+function updateConsultation(id, consultationData) {
+    const consultations = getConsultations();
+    const index = consultations.findIndex(consultation => consultation.id === id);
+    
+    if (index === -1) {
+        throw new Error('Консультация не найдена');
+    }
+    
+    consultations[index] = {
+        ...consultations[index],
+        ...consultationData,
+        updatedAt: new Date().toISOString()
+    };
+    
+    consultations.sort((a, b) => new Date(a.date) - new Date(b.date));
+    setStorageItem(CONSULTATIONS_KEY, consultations);
+    
+    return consultations[index];
+}
+
+/**
+ * Удаляет консультацию
+ */
+function deleteConsultation(id) {
+    const consultations = getConsultations();
+    const filteredConsultations = consultations.filter(consultation => consultation.id !== id);
+    
+    if (filteredConsultations.length === consultations.length) {
+        return false;
+    }
+    
+    setStorageItem(CONSULTATIONS_KEY, filteredConsultations);
+    return true;
+}
+
+/**
+ * Получает список экзаменов
+ */
+function getExams() {
+    return getStorageItem(EXAMS_KEY, []);
+}
+
+/**
+ * Добавляет экзамен
+ */
+function addExam(examData) {
+    const exams = getExams();
+    
+    const newExam = {
+        id: generateId(),
+        ...examData,
+        status: 'Ожидается',
+        createdAt: new Date().toISOString()
+    };
+    
+    exams.push(newExam);
+    exams.sort((a, b) => new Date(a.date) - new Date(b.date));
+    
+    setStorageItem(EXAMS_KEY, exams);
+    
+    // Добавляем уведомление
+    addNotification({
+        title: 'Новый экзамен',
+        message: `Добавлен экзамен по предмету "${examData.subject}"`,
+        type: 'exam'
+    });
+    
+    return newExam;
+}
+
+/**
+ * Обновляет экзамен
+ */
+function updateExam(id, examData) {
+    const exams = getExams();
+    const index = exams.findIndex(exam => exam.id === id);
+    
+    if (index === -1) {
+        throw new Error('Экзамен не найден');
+    }
+    
+    exams[index] = {
+        ...exams[index],
+        ...examData,
+        updatedAt: new Date().toISOString()
+    };
+    
+    exams.sort((a, b) => new Date(a.date) - new Date(b.date));
+    setStorageItem(EXAMS_KEY, exams);
+    
+    return exams[index];
+}
+
+/**
+ * Удаляет экзамен
+ */
+function deleteExam(id) {
+    const exams = getExams();
+    const filteredExams = exams.filter(exam => exam.id !== id);
+    
+    if (filteredExams.length === exams.length) {
+        return false;
+    }
+    
+    setStorageItem(EXAMS_KEY, filteredExams);
+    return true;
+}
+
+/**
+ * Получает список уведомлений
+ */
+function getNotifications() {
+    return getStorageItem(NOTIFICATIONS_KEY, []);
+}
+
+/**
+ * Добавляет уведомление
+ */
+function addNotification(notificationData) {
+    const notifications = getNotifications();
+    
+    const newNotification = {
+        id: generateId(),
+        ...notificationData,
+        read: false,
+        date: new Date().toISOString()
+    };
+    
+    notifications.unshift(newNotification);
+    
+    // Ограничиваем количество уведомлений
+    if (notifications.length > 50) {
+        notifications.splice(50);
+    }
+    
+    setStorageItem(NOTIFICATIONS_KEY, notifications);
+    
+    return newNotification;
+}
+
+/**
+ * Отмечает уведомление как прочитанное
+ */
+function markNotificationAsRead(id) {
+    const notifications = getNotifications();
+    const index = notifications.findIndex(notification => notification.id === id);
+    
+    if (index !== -1) {
+        notifications[index].read = true;
+        setStorageItem(NOTIFICATIONS_KEY, notifications);
+        return notifications[index];
+    }
+    
+    return null;
+}
+
+/**
+ * Отмечает все уведомления как прочитанные
+ */
+function markAllNotificationsAsRead() {
+    const notifications = getNotifications();
+    
+    notifications.forEach(notification => {
+        notification.read = true;
+    });
+    
+    setStorageItem(NOTIFICATIONS_KEY, notifications);
+}
+
+/**
+ * Удаляет уведомление
+ */
+function deleteNotification(id) {
+    const notifications = getNotifications();
+    const filteredNotifications = notifications.filter(notification => notification.id !== id);
+    
+    if (filteredNotifications.length === notifications.length) {
+        return false;
+    }
+    
+    setStorageItem(NOTIFICATIONS_KEY, filteredNotifications);
+    return true;
+}
+
+/**
+ * Получает количество непрочитанных уведомлений
+ */
+function getUnreadNotificationsCount() {
+    const notifications = getNotifications();
+    return notifications.filter(notification => !notification.read).length;
+}
+
+/**
+ * Интеграция с Google Таблицами
+ */
+function syncWithGoogleSheets(spreadsheetUrl) {
+    // Имитация синхронизации с Google Таблицами
+    return new Promise((resolve, reject) => {
+        setTimeout(() => {
+            if (spreadsheetUrl && spreadsheetUrl.includes('docs.google.com')) {
+                // Имитация успешной синхронизации
+                addNotification({
+                    title: 'Синхронизация завершена',
+                    message: 'Данные успешно синхронизированы с Google Таблицами',
+                    type: 'sync'
+                });
+                resolve({ success: true, message: 'Синхронизация завершена успешно' });
+            } else {
+                reject(new Error('Неверная ссылка на Google Таблицу'));
+            }
+        }, 2000);
+    });
+}
+
+/**
+ * Получает статистику для админ-панели
+ */
+function getAdminStats() {
+    const users = getUsers();
+    const students = users.filter(user => user.role === 'student');
+    const teachers = users.filter(user => user.role === 'teacher');
+    const admins = users.filter(user => user.role === 'admin');
+    
+    // Статистика посещаемости (имитация)
+    const attendanceData = [60, 75, 85, 55, 65, 45];
+    
+    // Распределение пользователей
+    const usersDistribution = {
+        students: students.length,
+        teachers: teachers.length,
+        admins: admins.length
+    };
+    
+    // Занятость аудиторий (имитация)
+    const roomsUsage = '83%';
+    
+    return {
+        usersCount: users.length,
+        studentsCount: students.length,
+        teachersCount: teachers.length,
+        adminsCount: admins.length,
+        attendanceData,
+        usersDistribution,
+        roomsUsage
+    };
+}
+
+// Инициализация при загрузке
+initializeData();
+    </script>
+    <script>
+        /**
+ * Модуль для работы с интерфейсом
+ */
+
+// Текущие фильтры расписания
+let currentFilters = {
+    faculty: '',
+    group: ''
+};
+
+/**
+ * Инициализирует интерфейс приложения
+ */
+function initializeUI() {
+    initializeNavigation();
+    initializeForms();
+    initializeSchedule();
+    initializeConsultations();
+    initializeExams();
+    initializeAdminPanel();
+    initializeNotifications();
+    initializeUserProfile();
+    initializeScheduleFilters();
+    initializeWeekNavigation();
+}
+
+/**
+ * Инициализирует навигацию
+ */
+function initializeNavigation() {
+    // Обработчики для основной навигации
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tab = link.getAttribute('data-tab');
+            setActiveTab(tab);
+        });
+    });
+    
+    // Обработчики для мобильной навигации
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileNavLinks.forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            const tab = link.getAttribute('data-tab');
+            setActiveTab(tab);
+            toggleMobileMenu();
+        });
+    });
+    
+    // Кнопка мобильного меню
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const closeMobileMenuBtn = document.getElementById('close-mobile-menu');
+    
+    mobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    closeMobileMenuBtn.addEventListener('click', toggleMobileMenu);
+    
+    // Кнопка профиля пользователя
+    const userProfileBtn = document.getElementById('user-profile-btn');
+    userProfileBtn.addEventListener('click', toggleUserMenu);
+    
+    // Кнопка уведомлений
+    const notificationsBtn = document.getElementById('notifications-btn');
+    notificationsBtn.addEventListener('click', toggleNotificationsMenu);
+    
+    // Обработчики для кнопок профиля
+    document.getElementById('logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        logoutUser();
+    });
+    
+    document.getElementById('mobile-logout-btn').addEventListener('click', (e) => {
+        e.preventDefault();
+        logoutUser();
+    });
+    
+    document.getElementById('profile-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showUserProfile();
+    });
+    
+    document.getElementById('mobile-profile-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showUserProfile();
+        toggleMobileMenu();
+    });
+    
+    document.getElementById('settings-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showUserSettings();
+    });
+    
+    document.getElementById('mobile-settings-link').addEventListener('click', (e) => {
+        e.preventDefault();
+        showUserSettings();
+        toggleMobileMenu();
+    });
+    
+    // Закрытие меню при клике вне его
+    document.addEventListener('click', (e) => {
+        const userMenu = document.getElementById('user-menu');
+        const notificationsMenu = document.getElementById('notifications-menu');
+        
+        if (!userProfileBtn.contains(e.target) && !userMenu.contains(e.target)) {
+            userMenu.classList.add('hidden');
+        }
+        
+        if (notificationsBtn && !notificationsBtn.contains(e.target) && !notificationsMenu.contains(e.target)) {
+            notificationsMenu.classList.add('hidden');
+        }
+    });
+}
+
+/**
+ * Устанавливает активную вкладку
+ */
+function setActiveTab(tab) {
+    // Скрываем все страницы
+    const pages = document.querySelectorAll('.page-content');
+    pages.forEach(page => {
+        page.classList.add('hidden');
+    });
+    
+    // Показываем выбранную страницу
+    const activePage = document.getElementById(`${tab}-page`);
+    if (activePage) {
+        activePage.classList.remove('hidden');
+    }
+    
+    // Обновляем активные ссылки в навигации
+    const navLinks = document.querySelectorAll('.nav-link');
+    navLinks.forEach(link => {
+        if (link.getAttribute('data-tab') === tab) {
+            link.classList.add('bg-blue-700');
+        } else {
+            link.classList.remove('bg-blue-700');
+        }
+    });
+    
+    // Обновляем активные ссылки в мобильной навигации
+    const mobileNavLinks = document.querySelectorAll('.mobile-nav-link');
+    mobileNavLinks.forEach(link => {
+        if (link.getAttribute('data-tab') === tab) {
+            link.classList.add('bg-gray-100');
+        } else {
+            link.classList.remove('bg-gray-100');
+        }
+    });
+    
+    // Обновляем данные на странице
+    switch (tab) {
+        case 'schedule':
+            updateScheduleUI();
+            break;
+        case 'consultations':
+            updateConsultationsUI();
+            break;
+        case 'exams':
+            updateExamsUI();
+            break;
+        case 'admin':
+            updateAdminUI();
+            break;
+    }
+}
+
+/**
+ * Переключает мобильное меню
+ */
+function toggleMobileMenu() {
+    const mobileMenu = document.querySelector('.mobile-menu');
+    mobileMenu.classList.toggle('active');
+}
+
+/**
+ * Переключает меню пользователя
+ */
+function toggleUserMenu() {
+    const userMenu = document.getElementById('user-menu');
+    userMenu.classList.toggle('hidden');
+}
+
+/**
+ * Переключает меню уведомлений
+ */
+function toggleNotificationsMenu() {
+    const notificationsMenu = document.getElementById('notifications-menu');
+    notificationsMenu.classList.toggle('hidden');
+    
+    // Если меню открыто, отмечаем уведомления как прочитанные
+    if (!notificationsMenu.classList.contains('hidden')) {
+        markAllNotificationsAsRead();
+        updateNotificationsUI();
+    }
+}
+
+/**
+ * Инициализирует формы
+ */
+function initializeForms() {
+    // Форма входа
+    const loginForm = document.getElementById('login-form');
+    loginForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (validateForm(loginForm)) {
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            
+            try {
+                login(email, password);
+                showApp();
+                showToast('Вы успешно вошли в систему', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+    });
+    
+    // Форма регистрации
+    const registerForm = document.getElementById('register-form');
+    registerForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (validateForm(registerForm)) {
+            const name = document.getElementById('register-name').value;
+            const surname = document.getElementById('register-surname').value;
+            const email = document.getElementById('register-email').value;
+            const password = document.getElementById('register-password').value;
+            const role = document.getElementById('register-role').value;
+            
+            try {
+                register({
+                    name,
+                    surname,
+                    email,
+                    password,
+                    role
+                });
+                
+                showApp();
+                showToast('Регистрация успешна', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+    });
+    
+    // Кнопки переключения между формами
+    document.getElementById('go-to-register').addEventListener('click', (e) => {
+        e.preventDefault();
+        showRegisterPage();
+    });
+    
+    document.getElementById('back-to-login').addEventListener('click', (e) => {
+        e.preventDefault();
+        showLoginPage();
+    });
+    
+    // Форма добавления консультации
+    const consultationForm = document.getElementById('consultation-form');
+    consultationForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (validateForm(consultationForm)) {
+            const date = document.getElementById('consultation-date').value;
+            const time = document.getElementById('consultation-time').value;
+            const subject = document.getElementById('consultation-subject').value;
+            const room = document.getElementById('consultation-room').value;
+            const teacher = document.getElementById('consultation-teacher').value || getCurrentUser().surname + ' ' + getCurrentUser().name[0] + '.';
+            const groups = document.getElementById('consultation-groups').value;
+            const comment = document.getElementById('consultation-comment').value;
+            
+            try {
+                addConsultation({
+                    subject,
+                    teacher,
+                    type: 'Консультация',
+                    date,
+                    time,
+                    room,
+                    building: '1',
+                    groups,
+                    comment
+                });
+                
+                toggleAddForm('consultation');
+                updateConsultationsUI();
+                showToast('Консультация добавлена', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+    });
+    
+    // Кнопки для формы консультации
+    document.getElementById('add-consultation-btn').addEventListener('click', () => {
+        toggleAddForm('consultation');
+    });
+    
+    document.getElementById('cancel-consultation-btn').addEventListener('click', () => {
+        toggleAddForm('consultation');
+    });
+    
+    // Форма добавления экзамена
+    const examForm = document.getElementById('exam-form');
+    examForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        
+        if (validateForm(examForm)) {
+            const date = document.getElementById('exam-date').value;
+            const time = document.getElementById('exam-time').value;
+            const subject = document.getElementById('exam-subject').value;
+            const room = document.getElementById('exam-room').value;
+            const teacher = document.getElementById('exam-teacher').value || getCurrentUser().surname + ' ' + getCurrentUser().name[0] + '.';
+            const groups = document.getElementById('exam-groups').value;
+            const type = document.querySelector('input[name="exam-type"]:checked').value;
+            
+            try {
+                addExam({
+                    subject,
+                    course: '2',
+                    teacher,
+                    date,
+                    time,
+                    room,
+                    building: '1',
+                    groups,
+                    type
+                });
+                
+                toggleAddForm('exam');
+                updateExamsUI();
+                showToast('Экзамен добавлен', 'success');
+            } catch (error) {
+                showToast(error.message, 'error');
+            }
+        }
+    });
+    
+    // Кнопки для формы экзамена
+    document.getElementById('add-exam-btn').addEventListener('click', () => {
+        toggleAddForm('exam');
+    });
+    
+    document.getElementById('cancel-exam-btn').addEventListener('click', () => {
+        toggleAddForm('exam');
+    });
+    
+    // Кнопки проверки аудитории
+    document.getElementById('check-room-btn').addEventListener('click', () => {
+        showToast('Аудитория свободна в указанное время', 'success');
+    });
+    
+    document.getElementById('check-exam-room-btn').addEventListener('click', () => {
+        showToast('Аудитория свободна в указанное время', 'success');
+    });
+}
+
+/**
+ * Переключает форму добавления
+ */
+function toggleAddForm(formType) {
+    if (formType === 'consultation') {
+        const form = document.getElementById('add-consultation-form');
+        const examForm = document.getElementById('add-exam-form');
+        form.classList.toggle('hidden');
+        examForm.classList.add('hidden');
+        
+        if (!form.classList.contains('hidden')) {
+            document.getElementById('consultation-form').reset();
+            document.getElementById('consultation-teacher').value = getCurrentUser().surname + ' ' + getCurrentUser().name[0] + '.';
+        }
+    } else if (formType === 'exam') {
+        const form = document.getElementById('add-exam-form');
+        const consForm = document.getElementById('add-consultation-form');
+        form.classList.toggle('hidden');
+        consForm.classList.add('hidden');
+        
+        if (!form.classList.contains('hidden')) {
+            document.getElementById('exam-form').reset();
+            document.getElementById('exam-teacher').value = getCurrentUser().surname + ' ' + getCurrentUser().name[0] + '.';
+        }
+    }
+}
+
+/**
+ * Инициализирует фильтры расписания
+ */
+function initializeScheduleFilters() {
+    const facultySelect = document.getElementById('faculty-select');
+    const groupSelect = document.getElementById('group-select');
+    const applyFiltersBtn = document.getElementById('apply-filters');
+    
+    // Заполняем список факультетов
+    const faculties = getFaculties();
+    faculties.forEach(faculty => {
+        const option = document.createElement('option');
+        option.value = faculty.id;
+        option.textContent = faculty.name;
+        facultySelect.appendChild(option);
+    });
+    
+    // Обработчик изменения факультета
+    facultySelect.addEventListener('change', () => {
+        const facultyId = facultySelect.value;
+        
+        // Очищаем список групп
+        groupSelect.innerHTML = '';
+        groupSelect.disabled = !facultyId;
+        
+        if (facultyId) {
+            // Добавляем пустой вариант
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = 'Выберите группу';
+            groupSelect.appendChild(emptyOption);
+            
+            // Заполняем список групп
+            const groups = getGroupsByFaculty(facultyId);
+            groups.forEach(group => {
+                const option = document.createElement('option');
+                option.value = group.name;
+                option.textContent = group.name;
+                groupSelect.appendChild(option);
+            });
+        } else {
+            const emptyOption = document.createElement('option');
+            emptyOption.value = '';
+            emptyOption.textContent = 'Сначала выберите факультет';
+            groupSelect.appendChild(emptyOption);
+        }
+    });
+    
+    // Обработчик применения фильтров
+    applyFiltersBtn.addEventListener('click', () => {
+        currentFilters.faculty = facultySelect.value;
+        currentFilters.group = groupSelect.value;
+        
+        updateScheduleUI();
+        showToast('Фильтры применены', 'success');
+    });
+}
+
+/**
+ * Инициализирует навигацию по неделям
+ */
+function initializeWeekNavigation() {
+    const prevWeekBtn = document.getElementById('prev-week');
+    const nextWeekBtn = document.getElementById('next-week');
+    const currentWeekBtn = document.getElementById('current-week-btn');
+    
+    prevWeekBtn.addEventListener('click', () => {
+        const currentWeek = getCurrentWeek();
+        const prevWeek = new Date(currentWeek);
+        prevWeek.setDate(prevWeek.getDate() - 7);
+        setCurrentWeek(prevWeek);
+        updateScheduleUI();
+        updateWeekDisplay();
+    });
+    
+    nextWeekBtn.addEventListener('click', () => {
+        const currentWeek = getCurrentWeek();
+        const nextWeek = new Date(currentWeek);
+        nextWeek.setDate(nextWeek.getDate() + 7);
+        setCurrentWeek(nextWeek);
+        updateScheduleUI();
+        updateWeekDisplay();
+    });
+    
+    currentWeekBtn.addEventListener('click', () => {
+        setCurrentWeek(new Date());
+        updateScheduleUI();
+        updateWeekDisplay();
+        showToast('Переход к текущей неделе', 'info');
+    });
+    
+    // Инициализируем отображение недели
+    updateWeekDisplay();
+}
+
+/**
+ * Обновляет отображение текущей недели
+ */
+function updateWeekDisplay() {
+    const currentWeek = getCurrentWeek();
+    const weekEnd = new Date(currentWeek);
+    weekEnd.setDate(weekEnd.getDate() + 6);
+    
+    const weekDisplayElement = document.getElementById('current-week-display');
+    const weekTypeElement = document.getElementById('week-type-display');
+    
+    if (weekDisplayElement) {
+        weekDisplayElement.textContent = `${formatDate(currentWeek, 'short')} - ${formatDate(weekEnd, 'short')}`;
+    }
+    
+    if (weekTypeElement) {
+        const isEven = isEvenWeek(currentWeek);
+        weekTypeElement.textContent = isEven ? 'Четная неделя' : 'Нечетная неделя';
+    }
+}
+
+/**
+ * Инициализирует расписание
+ */
+function initializeSchedule() {
+    // Кнопки экспорта и печати
+    document.getElementById('print-schedule').addEventListener('click', () => {
+        window.print();
+    });
+    
+    document.getElementById('export-schedule').addEventListener('click', () => {
+        showToast('Расписание экспортировано', 'success');
+    });
+    
+    // Инициализация расписания
+    updateScheduleUI();
+}
+
+/**
+ * Обновляет интерфейс расписания
+ */
+function updateScheduleUI() {
+    const currentWeek = getCurrentWeek();
+    const schedule = getScheduleForWeek(currentWeek, currentFilters);
+    const tableBody = document.querySelector('#schedule-table tbody');
+    
+    // Очищаем таблицу
+    tableBody.innerHTML = '';
+    
+    // Создаем структуру для расписания
+    const timeSlots = ['8:00-9:30', '9:40-11:10', '11:20-12:50', '13:00-14:30', '14:40-16:10', '16:20-17:50'];
+    const days = 6; // Пн-Сб
+    
+    // Создаем пустую сетку расписания
+    const grid = {};
+    timeSlots.forEach(time => {
+        grid[time] = Array(days).fill(null);
+    });
+    
+    // Заполняем сетку данными
+    schedule.forEach(lesson => {
+        if (timeSlots.includes(lesson.time) && lesson.day >= 0 && lesson.day < days) {
+            if (!grid[lesson.time][lesson.day]) {
+                grid[lesson.time][lesson.day] = [];
+            }
+            grid[lesson.time][lesson.day].push(lesson);
+        }
+    });
+    
+    // Создаем строки таблицы
+    timeSlots.forEach(time => {
+        const row = document.createElement('tr');
+        
+        // Ячейка времени
+        const timeCell = document.createElement('td');
+        timeCell.className = 'bg-gray-50 p-2 text-center border align-top';
+        timeCell.textContent = time;
+        row.appendChild(timeCell);
+        
+        // Ячейки для каждого дня
+        for (let day = 0; day < days; day++) {
+            const cell = document.createElement('td');
+            cell.className = 'p-2 border align-top';
+            
+            const lessons = grid[time][day];
+            if (lessons && lessons.length > 0) {
+                lessons.forEach(lesson => {
+                    const lessonElement = createScheduleItem(lesson);
+                    cell.appendChild(lessonElement);
+                });
+            }
+            
+            row.appendChild(cell);
+        }
+        
+        tableBody.appendChild(row);
+    });
+    
+    updateWeekDisplay();
+}
+
+/**
+ * Создает элемент занятия для расписания
+ */
+function createScheduleItem(lesson) {
+    const div = document.createElement('div');
+    div.className = 'schedule-item bg-blue-50 p-3 rounded-lg border-l-4 border-blue-500 mb-2';
+    
+    // Определяем цвет в зависимости от типа занятия
+    let colorClass = 'border-blue-500 bg-blue-50';
+    if (lesson.type === 'Практика') {
+        colorClass = 'border-green-500 bg-green-50';
+    } else if (lesson.type === 'Лабораторная') {
+        colorClass = 'border-purple-500 bg-purple-50';
+    }
+    
+    div.className = `schedule-item p-3 rounded-lg border-l-4 mb-2 ${colorClass}`;
+    
+    div.innerHTML = `
+        <div class="font-medium text-gray-800">${lesson.subject}</div>
+        <div class="text-sm text-gray-600">${lesson.type}</div>
+        <div class="text-sm text-gray-600">Ауд. ${lesson.room}, корп. ${lesson.building}</div>
+        <div class="text-sm text-gray-600">${lesson.teacher}</div>
+        ${lesson.groups ? `<div class="text-xs text-gray-500">${lesson.groups.join(', ')}</div>` : ''}
+    `;
+    
+    return div;
+}
+
+/**
+ * Инициализирует консультации
+ */
+function initializeConsultations() {
+    updateConsultationsUI();
+    
+    // Обработчик событий для списка консультаций
+    document.getElementById('consultations-list').addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        
+        const id = target.getAttribute('data-id');
+        const action = target.getAttribute('data-action');
+        
+        if (action === 'edit-consultation') {
+            editConsultation(id);
+        } else if (action === 'delete-consultation') {
+            confirmDeleteConsultation(id);
+        }
+    });
+}
+
+/**
+ * Обновляет интерфейс консультаций
+ */
+function updateConsultationsUI() {
+    const consultations = getConsultations();
+    const container = document.getElementById('consultations-list');
+    
+    // Очищаем контейнер
+    container.innerHTML = '';
+    
+    // Добавляем консультации
+    if (consultations.length === 0) {
+        container.innerHTML = '<div class="col-span-full text-center py-8 text-gray-500">Нет запланированных консультаций</div>';
+    } else {
+        consultations.forEach(consultation => {
+            const element = createConsultationItem(consultation);
+            container.appendChild(element);
+        });
+    }
+    
+    // Скрываем кнопку добавления для студентов
+    const addConsultationBtn = document.getElementById('add-consultation-btn');
+    const currentUser = getCurrentUser();
+    
+    if (currentUser && currentUser.role === 'student') {
+        addConsultationBtn.classList.add('hidden');
+    } else {
+        addConsultationBtn.classList.remove('hidden');
+    }
+}
+
+/**
+ * Создает элемент консультации
+ */
+function createConsultationItem(consultation) {
+    const div = document.createElement('div');
+    div.className = 'glass-card p-6 rounded-lg hover:shadow-lg transition-all duration-300';
+    
+    const currentUser = getCurrentUser();
+    const canEdit = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
+    
+    div.innerHTML = `
+        <div class="flex justify-between items-start mb-4">
+            <div>
+                <h3 class="font-semibold text-lg text-blue-700">${consultation.subject}</h3>
+                <p class="text-sm text-gray-600">${consultation.teacher}</p>
+            </div>
+            <div class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-xs font-medium">
+                ${consultation.type}
+            </div>
+        </div>
+        
+        <div class="space-y-2 mb-4">
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="far fa-calendar mr-2 w-4"></i>
+                <span>${formatDate(new Date(consultation.date))}</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="far fa-clock mr-2 w-4"></i>
+                <span>${consultation.time}</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fas fa-door-open mr-2 w-4"></i>
+                <span>Ауд. ${consultation.room}, корп. ${consultation.building}</span>
+            </div>
+            <div class="flex items-center text-sm text-gray-600">
+                <i class="fas fa-users mr-2 w-4"></i>
+                <span>Группы: ${consultation.groups}</span>
+            </div>
+        </div>
+        
+        ${consultation.comment ? `
+            <div class="bg-gray-50 p-3 rounded-lg mb-4">
+                <p class="text-sm text-gray-700">${consultation.comment}</p>
+            </div>
+        ` : ''}
+        
+        ${canEdit ? `
+            <div class="flex justify-end gap-2">
+                <button class="px-3 py-1 text-blue-600 hover:bg-blue-50 rounded-md text-sm" data-id="${consultation.id}" data-action="edit-consultation">
+                    <i class="fas fa-edit mr-1"></i>Редактировать
+                </button>
+                <button class="px-3 py-1 text-red-600 hover:bg-red-50 rounded-md text-sm" data-id="${consultation.id}" data-action="delete-consultation">
+                    <i class="fas fa-trash mr-1"></i>Удалить
+                </button>
+            </div>
+        ` : ''}
+    `;
+    
+    return div;
+}
+
+/**
+ * Инициализирует экзамены
+ */
+function initializeExams() {
+    updateExamsUI();
+    
+    // Обработчик событий для таблицы экзаменов
+    document.getElementById('exams-table-body').addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        
+        const id = target.getAttribute('data-id');
+        const action = target.getAttribute('data-action');
+        
+        if (action === 'edit-exam') {
+            editExam(id);
+        } else if (action === 'delete-exam') {
+            confirmDeleteExam(id);
+        }
+    });
+}
+
+/**
+ * Обновляет интерфейс экзаменов
+ */
+function updateExamsUI() {
+    const exams = getExams();
+    const tableBody = document.getElementById('exams-table-body');
+    
+    // Очищаем таблицу
+    tableBody.innerHTML = '';
+    
+    // Добавляем экзамены
+    if (exams.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="8" class="text-center py-8 text-gray-500">Нет запланированных экзаменов</td></tr>';
+    } else {
+        exams.forEach(exam => {
+            const row = createExamRow(exam);
+            tableBody.appendChild(row);
+        });
+    }
+    
+    // Скрываем кнопку добавления для студентов
+    const addExamBtn = document.getElementById('add-exam-btn');
+    const currentUser = getCurrentUser();
+    
+    if (currentUser && currentUser.role === 'student') {
+        addExamBtn.classList.add('hidden');
+    } else {
+        addExamBtn.classList.remove('hidden');
+    }
+}
+
+/**
+ * Создает строку экзамена для таблицы
+ */
+function createExamRow(exam) {
+    const row = document.createElement('tr');
+    row.className = 'border-b hover:bg-gray-50 transition-colors';
+    
+    const currentUser = getCurrentUser();
+    const canEdit = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
+    
+    // Определяем цвет статуса
+    let statusClass = 'bg-yellow-100 text-yellow-800';
+    if (exam.status === 'Проведен') {
+        statusClass = 'bg-green-100 text-green-800';
+    } else if (exam.status === 'Отменен') {
+        statusClass = 'bg-red-100 text-red-800';
+    }
+    
+    row.innerHTML = `
+        <td class="p-3">
+            <div class="font-medium">${formatDate(new Date(exam.date))}</div>
+        </td>
+        <td class="p-3">
+            <div class="font-medium">${exam.subject}</div>
+            <div class="text-xs text-gray-500">${exam.course} курс</div>
+        </td>
+        <td class="p-3">${exam.teacher}</td>
+        <td class="p-3">${exam.room}, корп. ${exam.building}</td>
+        <td class="p-3">${exam.time}</td>
+        <td class="p-3">${exam.groups}</td>
+        <td class="p-3">
+            <span class="px-2 py-1 ${statusClass} rounded-full text-xs font-medium">
+                ${exam.status}
+            </span>
+        </td>
+        <td class="p-3">
+            ${canEdit ? `
+                <div class="flex gap-2">
+                    <button class="text-blue-600 hover:bg-blue-50 p-1 rounded" data-id="${exam.id}" data-action="edit-exam" title="Редактировать">
+                        <i class="fas fa-edit"></i>
+                    </button>
+                    <button class="text-red-600 hover:bg-red-50 p-1 rounded" data-id="${exam.id}" data-action="delete-exam" title="Удалить">
+                        <i class="fas fa-trash"></i>
+                    </button>
+                </div>
+            ` : '<span class="text-gray-400">—</span>'}
+        </td>
+    `;
+    
+    return row;
+}
+
+/**
+ * Инициализирует админ-панель
+ */
+function initializeAdminPanel() {
+    // Кнопка обновления данных
+    document.getElementById('refresh-admin-data').addEventListener('click', () => {
+        updateAdminUI();
+        showToast('Данные обновлены', 'success');
+    });
+    
+    // Кнопка синхронизации с Google
+    document.getElementById('sync-google-btn').addEventListener('click', () => {
+        const url = document.getElementById('google-sheet-url').value;
+        syncWithGoogleSheets(url)
+            .then(() => {
+                showToast('Данные синхронизированы с Google Таблицами', 'success');
+            })
+            .catch(error => {
+                showToast(error.message, 'error');
+            });
+    });
+    
+    // Кнопка интеграции с Google Таблицами
+    document.getElementById('google-sheets-integration').addEventListener('click', () => {
+        showGoogleSheetsModal();
+    });
+    
+    // Кнопка добавления пользователя
+    document.getElementById('add-user-btn').addEventListener('click', () => {
+        showAddUserForm();
+    });
+    
+    // Обработчик событий для таблицы пользователей
+    document.getElementById('users-table-body').addEventListener('click', (e) => {
+        const target = e.target.closest('button');
+        if (!target) return;
+        
+        const id = target.getAttribute('data-id');
+        const action = target.getAttribute('data-action');
+        
+        if (action === 'edit-user') {
+            editUser(id);
+        } else if (action === 'delete-user') {
+            confirmDeleteUser(id);
+        }
+    });
+    
+    // Инициализация админ-панели
+    updateAdminUI();
+}
+
+/**
+ * Обновляет интерфейс админ-панели
+ */
+function updateAdminUI() {
+    const stats = getAdminStats();
+    
+    // Обновляем статистику
+    document.getElementById('users-count').textContent = stats.usersCount;
+    document.getElementById('students-count').textContent = stats.studentsCount;
+    document.getElementById('teachers-count').textContent = stats.teachersCount;
+    document.getElementById('rooms-usage').textContent = stats.roomsUsage;
+    
+    // Обновляем график посещаемости
+    const attendanceChart = document.getElementById('attendance-chart');
+    attendanceChart.innerHTML = '';
+    attendanceChart.appendChild(createAttendanceChart(stats.attendanceData));
+    
+    // Обновляем график распределения пользователей
+    const usersDistribution = document.getElementById('users-distribution');
+    usersDistribution.innerHTML = '';
+    usersDistribution.appendChild(createUsersDistributionChart(stats.usersDistribution));
+    
+    // Обновляем таблицу пользователей
+    const users = getUsers();
+    const tableBody = document.getElementById('users-table-body');
+    tableBody.innerHTML = '';
+    
+    users.forEach(user => {
+        const row = createUserRow(user);
+        tableBody.appendChild(row);
+    });
+}
+
+/**
+ * Создает график посещаемости
+ */
+function createAttendanceChart(data) {
+    const container = document.createElement('div');
+    container.className = 'h-64 flex items-end space-x-4 justify-center';
+    
+    const days = ['Пн', 'Вт', 'Ср', 'Чт', 'Пт', 'Сб'];
+    
+    data.forEach((value, index) => {
+        const bar = document.createElement('div');
+        bar.className = 'w-10 flex flex-col items-center';
+        
+        const barElement = document.createElement('div');
+        barElement.className = 'bg-blue-500 w-8 rounded-t';
+        barElement.style.height = `${value}%`;
+        
+        const label = document.createElement('div');
+        label.className = 'mt-2 text-sm';
+        label.textContent = days[index];
+        
+        bar.appendChild(barElement);
+        bar.appendChild(label);
+        container.appendChild(bar);
+    });
+    
+    return container;
+}
+
+/**
+ * Создает график распределения пользователей
+ */
+function createUsersDistributionChart(data) {
+    const container = document.createElement('div');
+    container.className = 'h-64 flex items-center justify-center';
+    
+    // Простая имитация круговой диаграммы
+    const total = data.students + data.teachers + data.admins;
+    const studentsPercent = Math.round((data.students / total) * 100);
+    const teachersPercent = Math.round((data.teachers / total) * 100);
+    const adminsPercent = 100 - studentsPercent - teachersPercent;
+    
+    container.innerHTML = `
+        <div class="text-center">
+            <div class="w-32 h-32 rounded-full border-8 border-blue-500 mx-auto mb-4"></div>
+            <div class="space-y-2">
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 bg-blue-500 rounded-full mr-2"></div>
+                    <span class="text-sm">Студенты: ${studentsPercent}%</span>
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 bg-green-500 rounded-full mr-2"></div>
+                    <span class="text-sm">Преподаватели: ${teachersPercent}%</span>
+                </div>
+                <div class="flex items-center justify-center">
+                    <div class="w-3 h-3 bg-purple-500 rounded-full mr-2"></div>
+                    <span class="text-sm">Администраторы: ${adminsPercent}%</span>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    return container;
+}
+
+/**
+ * Создает строку пользователя для таблицы
+ */
+function createUserRow(user) {
+    const row = document.createElement('tr');
+    row.className = 'border-b hover:bg-gray-50';
+    
+    // Определяем цвет роли
+    let roleClass = 'bg-blue-100 text-blue-800';
+    if (user.role === 'teacher') {
+        roleClass = 'bg-purple-100 text-purple-800';
+    } else if (user.role === 'admin') {
+        roleClass = 'bg-red-100 text-red-800';
+    }
+    
+    // Определяем цвет статуса
+    const statusClass = user.active ? 'bg-green-100 text-green-800' : 'bg-gray-100 text-gray-800';
+    
+    row.innerHTML = `
+        <td class="p-3">${user.id}</td>
+        <td class="p-3">${user.surname} ${user.name}</td>
+        <td class="p-3">${user.email}</td>
+        <td class="p-3">
+            <span class="px-2 py-1 ${roleClass} rounded-full text-xs font-medium">
+                ${user.role === 'student' ? 'Студент' : user.role === 'teacher' ? 'Преподаватель' : 'Администратор'}
+            </span>
+        </td>
+        <td class="p-3">
+            <span class="px-2 py-1 ${statusClass} rounded-full text-xs font-medium">
+                ${user.active ? 'Активен' : 'Неактивен'}
+            </span>
+        </td>
+        <td class="p-3">
+            <div class="flex gap-2">
+                <button class="text-blue-600 hover:bg-blue-50 p-1 rounded" data-id="${user.id}" data-action="edit-user" title="Редактировать">
+                    <i class="fas fa-edit"></i>
+                </button>
+                <button class="text-red-600 hover:bg-red-50 p-1 rounded" data-id="${user.id}" data-action="delete-user" title="Удалить">
+                    <i class="fas fa-trash"></i>
+                </button>
+            </div>
+        </td>
+    `;
+    
+    return row;
+}
+
+/**
+ * Инициализирует уведомления
+ */
+function initializeNotifications() {
+    updateNotificationsUI();
+}
+
+/**
+ * Обновляет интерфейс уведомлений
+ */
+function updateNotificationsUI() {
+    const notifications = getNotifications();
+    const container = document.getElementById('notifications-list');
+    const showAllBtn = document.getElementById('show-all-notifications');
+    
+    // Очищаем контейнер
+    container.innerHTML = '';
+    
+    // Показываем только первые 3 уведомления
+    const displayNotifications = notifications.slice(0, 3);
+    
+    // Добавляем уведомления
+    if (displayNotifications.length === 0) {
+        container.innerHTML = '<div class="px-4 py-3 text-center text-gray-500">Нет уведомлений</div>';
+    } else {
+        displayNotifications.forEach(notification => {
+            const div = document.createElement('div');
+            div.className = 'px-4 py-3 border-b hover:bg-gray-50 cursor-pointer';
+            
+            // Форматируем дату
+            const date = new Date(notification.date);
+            const now = new Date();
+            const diffMs = now - date;
+            const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
+            
+            let dateText;
+            if (diffDays === 0) {
+                const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+                if (diffHours === 0) {
+                    const diffMinutes = Math.floor(diffMs / (1000 * 60));
+                    dateText = `${diffMinutes} минут назад`;
+                } else {
+                    dateText = `${diffHours} часов назад`;
+                }
+            } else if (diffDays === 1) {
+                dateText = 'Вчера';
+            } else {
+                dateText = formatDate(date, 'short');
+            }
+            
+            div.innerHTML = `
+                <p class="text-sm font-medium ${notification.read ? 'text-gray-600' : 'text-gray-900'}">${notification.title}</p>
+                <p class="text-xs text-gray-500">${notification.message}</p>
+                <p class="text-xs text-gray-400 mt-1">${dateText}</p>
+            `;
+            
+            // Отмечаем как прочитанное при клике
+            div.addEventListener('click', () => {
+                if (!notification.read) {
+                    markNotificationAsRead(notification.id);
+                    updateNotificationsUI();
+                }
+            });
+            
+            container.appendChild(div);
+        });
+    }
+    
+    // Показываем кнопку "Показать все" только если уведомлений больше 3
+    if (notifications.length > 3) {
+        showAllBtn.classList.remove('hidden');
+    } else {
+        showAllBtn.classList.add('hidden');
+    }
+    
+    // Обновляем индикатор уведомлений
+    const unreadCount = getUnreadNotificationsCount();
+    const notificationDot = document.querySelector('.notification-dot');
+    
+    if (unreadCount > 0) {
+        notificationDot.classList.remove('hidden');
+    } else {
+        notificationDot.classList.add('hidden');
+    }
+}
+
+/**
+ * Инициализирует профиль пользователя
+ */
+function initializeUserProfile() {
+    updateUserProfileUI();
+}
+
+/**
+ * Обновляет интерфейс профиля пользователя
+ */
+function updateUserProfileUI() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    // Обновляем имя пользователя
+    document.getElementById('user-display-name').textContent = `${user.surname} ${user.name[0]}.`;
+    document.getElementById('mobile-user-name').textContent = `${user.surname} ${user.name[0]}.`;
+    
+    // Показываем/скрываем админ-ссылки
+    if (user.role === 'admin') {
+        document.getElementById('admin-link').classList.remove('hidden');
+        document.getElementById('admin-link-mobile').classList.remove('hidden');
+    } else {
+        document.getElementById('admin-link').classList.add('hidden');
+        document.getElementById('admin-link-mobile').classList.add('hidden');
+    }
+    
+    // Показываем/скрываем фильтры расписания для студентов
+    const scheduleFilters = document.getElementById('schedule-filters');
+    if (user.role === 'student') {
+        scheduleFilters.classList.remove('hidden');
+    } else {
+        scheduleFilters.classList.add('hidden');
+    }
+}
+
+/**
+ * Показывает профиль пользователя
+ */
+function showUserProfile() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    const content = document.createElement('div');
+    content.className = 'space-y-4';
+    content.innerHTML = `
+        <div class="flex items-center">
+            <img class="h-16 w-16 rounded-full mr-4" src="https://randomuser.me/api/portraits/men/1.jpg" alt="User">
+            <div>
+                <h3 class="text-lg font-medium">${user.surname} ${user.name}</h3>
+                <p class="text-gray-500">${user.email}</p>
+            </div>
+        </div>
+        <div class="mt-4">
+            <p><span class="font-medium">Роль:</span> ${user.role === 'student' ? 'Студент' : user.role === 'teacher' ? 'Преподаватель' : 'Администратор'}</p>
+            <p><span class="font-medium">Статус:</span> ${user.active ? 'Активен' : 'Неактивен'}</p>
+        </div>
+    `;
+    
+    showModal('Профиль пользователя', content, () => {
+        document.getElementById('modal-overlay').classList.add('hidden');
+        editUserProfile();
+    }, null, {
+        confirmText: 'Редактировать',
+        cancelText: 'Закрыть'
+    });
+}
+
+/**
+ * Редактирует профиль пользователя
+ */
+function editUserProfile() {
+    const user = getCurrentUser();
+    if (!user) return;
+    
+    // Создаем форму редактирования
+    const form = document.createElement('form');
+    form.className = 'grid grid-cols-1 md:grid-cols-2 gap-4';
+    form.innerHTML = `
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Имя</label>
+            <input type="text" id="profile-name" class="w-full p-2 border rounded-lg" value="${user.name}" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Фамилия</label>
+            <input type="text" id="profile-surname" class="w-full p-2 border rounded-lg" value="${user.surname}" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Email</label>
+            <input type="email" id="profile-email" class="w-full p-2 border rounded-lg" value="${user.email}" required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Новый пароль</label>
+            <input type="password" id="profile-password" class="w-full p-2 border rounded-lg" placeholder="Оставьте пустым, чтобы не менять">
+        </div>
+    `;
+    
+    // Показываем модальное окно
+    showModal('Редактирование профиля', form, () => {
+        // Обработчик подтверждения
+        const updatedUser = {
+            name: document.getElementById('profile-name').value,
+            surname: document.getElementById('profile-surname').value,
+            email: document.getElementById('profile-email').value
+        };
+        
+        // Добавляем пароль только если он был введен
+        const password = document.getElementById('profile-password').value;
+        if (password) {
+            updatedUser.password = password;
+        }
+        
+        try {
+            updateUser(user.id, updatedUser);
+            
+            // Обновляем данные текущего пользователя
+            const { password: _, ...userWithoutPassword } = getUserById(user.id);
+            setStorageItem(CURRENT_USER_KEY, userWithoutPassword);
+            
+            updateUserProfileUI();
+            showToast('Профиль обновлен', 'success');
+        } catch (error) {
+            showToast(error.message, 'error');
+        }
+    });
+}
+
+/**
+ * Показывает настройки пользователя
+ */
+function showUserSettings() {
+    const form = document.createElement('form');
+    form.className = 'space-y-4';
+    form.innerHTML = `
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-gray-700 mb-1">Уведомления</label>
+            <div class="flex items-center">
+                <input type="checkbox" id="settings-notifications" class="h-4 w-4 text-blue-500 border-gray-300 rounded" checked>
+                <label for="settings-notifications" class="ml-2">Получать уведомления по email</label>
+            </div>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Тема оформления</label>
+            <select class="w-full p-2 border rounded-lg">
+                <option>Светлая</option>
+                <option>Темная</option>
+                <option>Автоматически</option>
+            </select>
+        </div>
+    `;
+    
+    showModal('Настройки', form, () => {
+        showToast('Настройки сохранены', 'success');
+    }, null, {
+        confirmText: 'Сохранить'
+    });
+}
+
+/**
+ * Выход пользователя из системы
+ */
+function logoutUser() {
+    logout();
+    showLoginPage();
+    showToast('Вы вышли из системы', 'info');
+}
+
+/**
+ * Показывает страницу входа
+ */
+function showLoginPage() {
+    document.getElementById('login-page').classList.remove('hidden');
+    document.getElementById('register-page').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+}
+
+/**
+ * Показывает страницу регистрации
+ */
+function showRegisterPage() {
+    document.getElementById('register-page').classList.remove('hidden');
+    document.getElementById('login-page').classList.add('hidden');
+    document.getElementById('app').classList.add('hidden');
+}
+
+/**
+ * Показывает основное приложение
+ */
+function showApp() {
+    document.getElementById('app').classList.remove('hidden');
+    document.getElementById('login-page').classList.add('hidden');
+    document.getElementById('register-page').classList.add('hidden');
+    
+    // Обновляем интерфейс
+    updateUserProfileUI();
+    setActiveTab('schedule');
+}
+
+/**
+ * Показывает модальное окно интеграции с Google Таблицами
+ */
+function showGoogleSheetsModal() {
+    const form = document.createElement('form');
+    form.className = 'space-y-4';
+    form.innerHTML = `
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Ссылка на Google Таблицу</label>
+            <input type="url" id="google-sheets-url" class="w-full p-2 border rounded-lg" placeholder="https://docs.google.com/spreadsheets/d/..." required>
+        </div>
+        <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">Тип синхронизации</label>
+            <select id="sync-type" class="w-full p-2 border rounded-lg">
+                <option value="import">Импорт из таблицы</option>
+                <option value="export">Экспорт в таблицу</option>
+                <option value="sync">Двусторонняя синхронизация</option>
+            </select>
+        </div>
+    `;
+    
+    showModal('Интеграция с Google Таблицами', form, () => {
+        const url = document.getElementById('google-sheets-url').value;
+        const syncType = document.getElementById('sync-type').value;
+        
+        syncWithGoogleSheets(url)
+            .then(() => {
+                showToast(`${syncType === 'import' ? 'Импорт' : syncType === 'export' ? 'Экспорт' : 'Синхронизация'} завершена успешно`, 'success');
+            })
+            .catch(error => {
+                showToast(error.message, 'error');
+            });
+    }, null, {
+        confirmText: 'Синхронизировать'
+    });
+}
+    </script>
+    <script >
+        /**
+ * Главный модуль приложения
+ */
+
+// Глобальные переменные
+let currentWeekOffset = 0;
+
+/**
+ * Инициализация приложения
+ */
+document.addEventListener('DOMContentLoaded', function() {
+    // Проверяем поддержку localStorage
+    if (!isLocalStorageSupported()) {
+        showToast('Ваш браузер не поддерживает localStorage. Некоторые функции могут работать некорректно.', 'warning', 5000);
+    }
+    
+    // Инициализируем данные
+    initializeData();
+    
+    // Проверяем аутентификацию
+    if (isAuthenticated()) {
+        showApp();
+        initializeUI();
+    } else {
+        showLoginPage();
+    }
+    
+    // Инициализируем обработчики событий
+    initializeEventListeners();
+    
+    // Запускаем периодическое обновление уведомлений
+    startNotificationUpdates();
+});
+
+/**
+ * Инициализирует обработчики событий
+ */
+function initializeEventListeners() {
+    // Обработчик изменения размера окна
+    window.addEventListener('resize', debounce(() => {
+        updateResponsiveLayout();
+    }, 250));
+    
+    // Обработчик клавиатурных сокращений
+    document.addEventListener('keydown', handleKeyboardShortcuts);
+    
+    // Обработчик видимости страницы
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    
+    // Обработчик ошибок
+    window.addEventListener('error', handleGlobalError);
+    
+    // Обработчик unhandled promise rejections
+    window.addEventListener('unhandledrejection', handleUnhandledRejection);
+}
+
+/**
+ * Обрабатывает клавиатурные сокращения
+ */
+function handleKeyboardShortcuts(event) {
+    // Ctrl/Cmd + K - поиск
+    if ((event.ctrlKey || event.metaKey) && event.key === 'k') {
+        event.preventDefault();
+        // Фокус на поиск (если есть)
+    }
+    
+    // Escape - закрыть модальные окна
+    if (event.key === 'Escape') {
+        const modal = document.getElementById('modal-overlay');
+        if (!modal.classList.contains('hidden')) {
+            hideModal();
+        }
+        
+        const userMenu = document.getElementById('user-menu');
+        if (!userMenu.classList.contains('hidden')) {
+            userMenu.classList.add('hidden');
+        }
+        
+        const notificationsMenu = document.getElementById('notifications-menu');
+        if (!notificationsMenu.classList.contains('hidden')) {
+            notificationsMenu.classList.add('hidden');
+        }
+    }
+}
+
+/**
+ * Обрабатывает изменение видимости страницы
+ */
+function handleVisibilityChange() {
+    if (!document.hidden && isAuthenticated()) {
+        // Обновляем уведомления при возвращении на страницу
+        updateNotificationsUI();
+    }
+}
+
+/**
+ * Обрабатывает глобальные ошибки
+ */
+function handleGlobalError(event) {
+    console.error('Глобальная ошибка:', event.error);
+    
+    // Показываем пользователю уведомление только для критических ошибок
+    if (event.error && event.error.message && !event.error.message.includes('Script error')) {
+        showToast('Произошла ошибка. Попробуйте обновить страницу.', 'error');
+    }
+}
+
+/**
+ * Обрабатывает необработанные отклонения промисов
+ */
+function handleUnhandledRejection(event) {
+    console.error('Необработанное отклонение промиса:', event.reason);
+    
+    // Предотвращаем вывод ошибки в консоль браузера
+    event.preventDefault();
+    
+    // Показываем пользователю уведомление
+    showToast('Произошла ошибка при выполнении операции.', 'error');
+}
+
+/**
+ * Обновляет адаптивную верстку
+ */
+function updateResponsiveLayout() {
+    const isMobileView = isMobile();
+    
+    // Закрываем мобильное меню при переходе на десктоп
+    if (!isMobileView) {
+        const mobileMenu = document.querySelector('.mobile-menu');
+        if (mobileMenu) {
+            mobileMenu.classList.remove('active');
+        }
+    }
+    
+    // Обновляем таблицы для мобильных устройств
+    const tables = document.querySelectorAll('table');
+    tables.forEach(table => {
+        const wrapper = table.closest('.overflow-x-auto');
+        if (wrapper) {
+            if (isMobileView) {
+                wrapper.style.overflowX = 'auto';
+            } else {
+                wrapper.style.overflowX = 'visible';
+            }
+        }
+    });
+}
+
+/**
+ * Запускает периодическое обновление уведомлений
+ */
+function startNotificationUpdates() {
+    // Обновляем уведомления каждые 30 секунд
+    setInterval(() => {
+        if (isAuthenticated()) {
+            updateNotificationsUI();
+        }
+    }, 30000);
+}
+
+/**
+ * Обрабатывает ошибки API
+ */
+function handleApiError(error) {
+    console.error('Ошибка API:', error);
+    
+    if (error.message) {
+        showToast(error.message, 'error');
+    } else {
+        showToast('Произошла ошибка при обращении к серверу', 'error');
+    }
+}
+
+/**
+ * Проверяет подключение к интернету
+ */
+function checkInternetConnection() {
+    return navigator.onLine;
+}
+
+/**
+ * Обрабатывает изменение статуса подключения
+ */
+function handleConnectionChange() {
+    if (navigator.onLine) {
+        showToast('Подключение к интернету восстановлено', 'success');
+        // Синхронизируем данные
+        syncOfflineData();
+    } else {
+        showToast('Отсутствует подключение к интернету', 'warning');
+    }
+}
+
+/**
+ * Синхронизирует офлайн данные
+ */
+function syncOfflineData() {
+    // Здесь была бы логика синхронизации офлайн данных
+    console.log('Синхронизация офлайн данных...');
+}
+
+/**
+ * Инициализирует Service Worker (для будущего использования)
+ */
+function initializeServiceWorker() {
+    if ('serviceWorker' in navigator) {
+        navigator.serviceWorker.register('/sw.js')
+            .then(registration => {
+                console.log('Service Worker зарегистрирован:', registration);
+            })
+            .catch(error => {
+                console.log('Ошибка регистрации Service Worker:', error);
+            });
+    }
+}
+
+/**
+ * Получает информацию о производительности
+ */
+function getPerformanceInfo() {
+    if ('performance' in window) {
+        const navigation = performance.getEntriesByType('navigation')[0];
+        return {
+            loadTime: navigation.loadEventEnd - navigation.loadEventStart,
+            domContentLoaded: navigation.domContentLoadedEventEnd - navigation.domContentLoadedEventStart,
+            totalTime: navigation.loadEventEnd - navigation.fetchStart
+        };
+    }
+    return null;
+}
+
+/**
+ * Логирует производительность
+ */
+function logPerformance() {
+    const perfInfo = getPerformanceInfo();
+    if (perfInfo) {
+        console.log('Производительность:', perfInfo);
+    }
+}
+
+/**
+ * Инициализирует аналитику (заглушка)
+ */
+function initializeAnalytics() {
+    // Здесь была бы инициализация Google Analytics или другой системы аналитики
+    console.log('Аналитика инициализирована');
+}
+
+/**
+ * Отправляет событие аналитики
+ */
+function trackEvent(category, action, label = null, value = null) {
+    // Здесь была бы отправка события в систему аналитики
+    console.log('Событие аналитики:', { category, action, label, value });
+}
+
+/**
+ * Инициализирует уведомления браузера
+ */
+function initializeBrowserNotifications() {
+    if ('Notification' in window) {
+        if (Notification.permission === 'default') {
+            Notification.requestPermission().then(permission => {
+                if (permission === 'granted') {
+                    showToast('Уведомления браузера включены', 'success');
+                }
+            });
+        }
+    }
+}
+
+/**
+ * Отправляет уведомление браузера
+ */
+function sendBrowserNotification(title, options = {}) {
+    if ('Notification' in window && Notification.permission === 'granted') {
+        const notification = new Notification(title, {
+            icon: '/favicon.ico',
+            badge: '/favicon.ico',
+            ...options
+        });
+        
+        // Автоматически закрываем уведомление через 5 секунд
+        setTimeout(() => {
+            notification.close();
+        }, 5000);
+        
+        return notification;
+    }
+    return null;
+}
+
+/**
+ * Проверяет обновления приложения
+ */
+function checkForUpdates() {
+    // Здесь была бы проверка обновлений
+    console.log('Проверка обновлений...');
+}
+
+/**
+ * Экспортирует данные пользователя
+ */
+function exportUserData() {
+    const user = getCurrentUser();
+    if (!user) {
+        showToast('Пользователь не авторизован', 'error');
+        return;
+    }
+    
+    const userData = {
+        profile: user,
+        schedule: getStorageItem(SCHEDULE_KEY),
+        consultations: getStorageItem(CONSULTATIONS_KEY),
+        exams: getStorageItem(EXAMS_KEY),
+        notifications: getStorageItem(NOTIFICATIONS_KEY)
+    };
+    
+    const dataStr = JSON.stringify(userData, null, 2);
+    const dataBlob = new Blob([dataStr], { type: 'application/json' });
+    
+    const link = document.createElement('a');
+    link.href = URL.createObjectURL(dataBlob);
+    link.download = `tgasu_data_${user.id}_${new Date().toISOString().split('T')[0]}.json`;
+    link.click();
+    
+    showToast('Данные экспортированы', 'success');
+}
+
+/**
+ * Импортирует данные пользователя
+ */
+function importUserData(file) {
+    const reader = new FileReader();
+    
+    reader.onload = function(e) {
+        try {
+            const userData = JSON.parse(e.target.result);
+            
+            // Валидируем структуру данных
+            if (!userData.profile || !userData.profile.id) {
+                throw new Error('Неверный формат файла');
+            }
+            
+            // Подтверждаем импорт
+            showModal(
+                'Импорт данных',
+                'Вы уверены, что хотите импортировать данные? Текущие данные будут перезаписаны.',
+                () => {
+                    // Импортируем данные
+                    if (userData.schedule) setStorageItem(SCHEDULE_KEY, userData.schedule);
+                    if (userData.consultations) setStorageItem(CONSULTATIONS_KEY, userData.consultations);
+                    if (userData.exams) setStorageItem(EXAMS_KEY, userData.exams);
+                    if (userData.notifications) setStorageItem(NOTIFICATIONS_KEY, userData.notifications);
+                    
+                    showToast('Данные импортированы успешно', 'success');
+                    
+                    // Обновляем интерфейс
+                    updateScheduleUI();
+                    updateConsultationsUI();
+                    updateExamsUI();
+                    updateNotificationsUI();
+                },
+                null,
+                {
+                    confirmText: 'Импортировать',
+                    confirmClass: 'px-4 py-2 bg-red-500 text-white rounded-md'
+                }
+            );
+            
+        } catch (error) {
+            showToast('Ошибка при импорте данных: ' + error.message, 'error');
+        }
+    };
+    
+    reader.readAsText(file);
+}
+
+/**
+ * Очищает кэш приложения
+ */
+function clearAppCache() {
+    showModal(
+        'Очистка кэша',
+        'Вы уверены, что хотите очистить кэш приложения? Это может помочь решить проблемы с производительностью.',
+        () => {
+            // Очищаем localStorage (кроме пользовательских данных)
+            const keysToKeep = [AUTH_TOKEN_KEY, CURRENT_USER_KEY, USERS_KEY];
+            const allKeys = Object.keys(localStorage);
+            
+            allKeys.forEach(key => {
+                if (!keysToKeep.includes(key)) {
+                    localStorage.removeItem(key);
+                }
+            });
+            
+            // Очищаем sessionStorage
+            sessionStorage.clear();
+            
+            showToast('Кэш очищен', 'success');
+            
+            // Перезагружаем страницу
+            setTimeout(() => {
+                window.location.reload();
+            }, 1000);
+        },
+        null,
+        {
+            confirmText: 'Очистить',
+            confirmClass: 'px-4 py-2 bg-red-500 text-white rounded-md'
+        }
+    );
+}
+
+/**
+ * Получает информацию о системе
+ */
+function getSystemInfo() {
+    return {
+        userAgent: navigator.userAgent,
+        platform: navigator.platform,
+        language: navigator.language,
+        cookieEnabled: navigator.cookieEnabled,
+        onLine: navigator.onLine,
+        screenResolution: `${screen.width}x${screen.height}`,
+        windowSize: `${window.innerWidth}x${window.innerHeight}`,
+        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+        localStorage: isLocalStorageSupported(),
+        sessionStorage: 'sessionStorage' in window,
+        webWorkers: 'Worker' in window,
+        serviceWorkers: 'serviceWorker' in navigator,
+        notifications: 'Notification' in window
+    };
+}
+
+/**
+ * Показывает информацию о системе
+ */
+function showSystemInfo() {
+    const info = getSystemInfo();
+    const content = Object.entries(info)
+        .map(([key, value]) => `<p><strong>${key}:</strong> ${value}</p>`)
+        .join('');
+    
+    showModal('Информация о системе', `<div class="space-y-2">${content}</div>`);
+}
+
+/**
+ * Инициализирует горячие клавиши для разработки
+ */
+function initializeDeveloperShortcuts() {
+    document.addEventListener('keydown', (event) => {
+        // Ctrl+Shift+D - показать информацию о системе
+        if (event.ctrlKey && event.shiftKey && event.key === 'D') {
+            event.preventDefault();
+            showSystemInfo();
+        }
+        
+        // Ctrl+Shift+C - очистить кэш
+        if (event.ctrlKey && event.shiftKey && event.key === 'C') {
+            event.preventDefault();
+            clearAppCache();
+        }
+        
+        // Ctrl+Shift+E - экспорт данных
+        if (event.ctrlKey && event.shiftKey && event.key === 'E') {
+            event.preventDefault();
+            exportUserData();
+        }
+        
+        // Ctrl+Shift+P - показать производительность
+        if (event.ctrlKey && event.shiftKey && event.key === 'P') {
+            event.preventDefault();
+            logPerformance();
+        }
+    });
+}
+
+// Инициализируем дополнительные функции
+document.addEventListener('DOMContentLoaded', () => {
+    // Инициализируем аналитику
+    initializeAnalytics();
+    
+    // Инициализируем уведомления браузера
+    initializeBrowserNotifications();
+    
+    // Инициализируем горячие клавиши для разработки
+    initializeDeveloperShortcuts();
+    
+    // Обработчики изменения подключения
+    window.addEventListener('online', handleConnectionChange);
+    window.addEventListener('offline', handleConnectionChange);
+    
+    // Логируем производительность после загрузки
+    window.addEventListener('load', () => {
+        setTimeout(logPerformance, 1000);
+    });
+    
+    // Проверяем обновления
+    setTimeout(checkForUpdates, 5000);
+});
+    </script>
 </body>
 </html>
