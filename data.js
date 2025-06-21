@@ -1,5 +1,5 @@
 /**
- * Модуль для работы с данными с полным функционалом
+ * Модуль для работы с данными с расширенным функционалом
  */
 
 // Ключи для хранения данных
@@ -27,6 +27,16 @@ function getScheduleForWeek() {
         setStorageItem(SCHEDULE_KEY, newSchedule);
         return newSchedule;
     }
+    return schedule;
+}
+
+/**
+ * Получает расписание для месяца (2 месяца)
+ */
+function getScheduleForMonth() {
+    const schedule = getScheduleForWeek();
+    // Для месячного вида возвращаем то же расписание
+    // В реальном приложении здесь была бы логика для получения расписания на месяц
     return schedule;
 }
 
@@ -90,6 +100,14 @@ function getConsultations() {
 }
 
 /**
+ * Получает консультацию по ID
+ */
+function getConsultationById(id) {
+    const consultations = getConsultations();
+    return consultations.find(consultation => consultation.id === id);
+}
+
+/**
  * Добавляет консультацию
  */
 function addConsultation(consultationData) {
@@ -99,8 +117,34 @@ function addConsultation(consultationData) {
         ...consultationData
     };
     consultations.push(newConsultation);
+    consultations.sort((a, b) => new Date(a.date) - new Date(b.date));
     setStorageItem(CONSULTATIONS_KEY, consultations);
     return newConsultation;
+}
+
+/**
+ * Обновляет консультацию
+ */
+function updateConsultation(id, consultationData) {
+    const consultations = getConsultations();
+    const index = consultations.findIndex(consultation => consultation.id === id);
+    if (index !== -1) {
+        consultations[index] = { ...consultations[index], ...consultationData };
+        consultations.sort((a, b) => new Date(a.date) - new Date(b.date));
+        setStorageItem(CONSULTATIONS_KEY, consultations);
+        return consultations[index];
+    }
+    return null;
+}
+
+/**
+ * Удаляет консультацию
+ */
+function removeConsultation(id) {
+    const consultations = getConsultations();
+    const filteredConsultations = consultations.filter(consultation => consultation.id !== id);
+    setStorageItem(CONSULTATIONS_KEY, filteredConsultations);
+    return true;
 }
 
 /**
@@ -117,6 +161,14 @@ function getExams() {
 }
 
 /**
+ * Получает экзамен по ID
+ */
+function getExamById(id) {
+    const exams = getExams();
+    return exams.find(exam => exam.id === id);
+}
+
+/**
  * Добавляет экзамен
  */
 function addExam(examData) {
@@ -126,8 +178,34 @@ function addExam(examData) {
         ...examData
     };
     exams.push(newExam);
+    exams.sort((a, b) => new Date(a.date) - new Date(b.date));
     setStorageItem(EXAMS_KEY, exams);
     return newExam;
+}
+
+/**
+ * Обновляет экзамен
+ */
+function updateExam(id, examData) {
+    const exams = getExams();
+    const index = exams.findIndex(exam => exam.id === id);
+    if (index !== -1) {
+        exams[index] = { ...exams[index], ...examData };
+        exams.sort((a, b) => new Date(a.date) - new Date(b.date));
+        setStorageItem(EXAMS_KEY, exams);
+        return exams[index];
+    }
+    return null;
+}
+
+/**
+ * Удаляет экзамен
+ */
+function removeExam(id) {
+    const exams = getExams();
+    const filteredExams = exams.filter(exam => exam.id !== id);
+    setStorageItem(EXAMS_KEY, filteredExams);
+    return true;
 }
 
 // Мок-данные
@@ -143,7 +221,11 @@ const mockSubjects = [
     'Инженерная графика',
     'Математика',
     'Физика',
-    'Химия'
+    'Химия',
+    'Экономика строительства',
+    'Безопасность жизнедеятельности',
+    'Экология',
+    'Информационные технологии'
 ];
 
 const mockTeachers = [
@@ -154,14 +236,19 @@ const mockTeachers = [
     'Смирнов С.М.',
     'Николаев Н.Н.',
     'Федоров Ф.Ф.',
-    'Михайлов М.М.'
+    'Михайлов М.М.',
+    'Александров А.А.',
+    'Васильев В.В.',
+    'Морозов М.М.',
+    'Новиков Н.Н.'
 ];
 
 const mockRooms = [
     '101', '102', '103', '104', '105',
     '201', '202', '203', '204', '205',
     '301', '302', '303', '304', '305',
-    '401', '402', '403', '404', '405'
+    '401', '402', '403', '404', '405',
+    'Лаб-1', 'Лаб-2', 'Лаб-3', 'Актовый зал'
 ];
 
 const mockGroups = [
@@ -169,7 +256,10 @@ const mockGroups = [
     ['АД-201', 'АД-202'],
     ['СТР-301'],
     ['ГЕО-101'],
-    ['ПГС-201']
+    ['ПГС-201'],
+    ['АД-301'],
+    ['СТР-401'],
+    ['ПГС-301']
 ];
 
 /**
@@ -218,9 +308,9 @@ function generateMockSchedule() {
 function generateMockConsultations() {
     const consultations = [];
     
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 12; i++) {
         const date = new Date();
-        date.setDate(date.getDate() + Math.floor(Math.random() * 21)); // В ближайшие 3 недели
+        date.setDate(date.getDate() + Math.floor(Math.random() * 60)); // В ближайшие 2 месяца
         
         const consultation = {
             id: generateId(),
@@ -245,9 +335,9 @@ function generateMockConsultations() {
 function generateMockExams() {
     const exams = [];
     
-    for (let i = 0; i < 6; i++) {
+    for (let i = 0; i < 10; i++) {
         const date = new Date();
-        date.setDate(date.getDate() + Math.floor(Math.random() * 45) + 15); // Через 15-60 дней
+        date.setDate(date.getDate() + Math.floor(Math.random() * 90) + 15); // Через 15-105 дней
         
         const exam = {
             id: generateId(),
@@ -277,7 +367,10 @@ function getRandomComment() {
         'Принести чертежные принадлежности',
         'Повторить материал прошлой лекции',
         'Подготовить практические задания',
-        'Принести методические указания'
+        'Принести методические указания',
+        'Изучить дополнительную литературу',
+        'Подготовить презентацию',
+        'Принести образцы материалов'
     ];
     
     return comments[Math.floor(Math.random() * comments.length)];
