@@ -1,4 +1,4 @@
-/* Mobile-first CSS с полной адаптивностью */
+/* Улучшенный CSS с гармоничными цветами и лучшей адаптивностью */
 * {
     box-sizing: border-box;
 }
@@ -13,31 +13,31 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* Стеклянный эффект */
+/* Стеклянный эффект с улучшенными цветами */
 .glass-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(226, 232, 240, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
 
 .dark .glass-card {
-    background: rgba(31, 41, 55, 0.95);
-    border: 1px solid rgba(75, 85, 99, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
 .glass-card:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
 }
 
 .dark .glass-card:hover {
-    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
 }
 
-/* Элементы расписания */
+/* Элементы расписания с улучшенными цветами */
 .schedule-item {
     transition: all 0.3s ease;
     border-left-width: 4px;
@@ -63,147 +63,170 @@ body {
 }
 
 .schedule-item:hover {
-    transform: translateY(-1px) scale(1.01);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.12);
 }
 
 .dark .schedule-item:hover {
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
 }
 
-/* Мобильные карточки расписания */
+/* Мобильные карточки с улучшенным дизайном */
 .mobile-day-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
-}
-
-.dark .mobile-day-card {
-    background: rgba(31, 41, 55, 0.95);
-    border: 1px solid rgba(75, 85, 99, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-}
-
-.mobile-lesson-card {
-    background: rgba(255, 255, 255, 0.8);
-    border-radius: 8px;
-    padding: 12px;
-    margin-bottom: 8px;
-    border-left: 4px solid #3b82f6;
+    border: 1px solid rgba(226, 232, 240, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     transition: all 0.3s ease;
 }
 
+.dark .mobile-day-card {
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
+}
+
+.mobile-day-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.dark .mobile-day-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+.mobile-lesson-card {
+    background: rgba(248, 250, 252, 0.9);
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 12px;
+    border-left: 4px solid #4f46e5;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
 .dark .mobile-lesson-card {
-    background: rgba(55, 65, 81, 0.8);
+    background: rgba(51, 65, 85, 0.9);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .mobile-lesson-card:hover {
-    transform: translateX(4px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    transform: translateX(6px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .dark .mobile-lesson-card:hover {
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* Мобильные карточки экзаменов */
 .mobile-exam-card {
     background: rgba(255, 255, 255, 0.95);
     backdrop-filter: blur(20px);
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 16px;
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border: 1px solid rgba(226, 232, 240, 0.3);
+    border-radius: 16px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
     border-left: 4px solid #ef4444;
+    transition: all 0.3s ease;
 }
 
 .dark .mobile-exam-card {
-    background: rgba(31, 41, 55, 0.95);
-    border: 1px solid rgba(75, 85, 99, 0.2);
-    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    background: rgba(30, 41, 59, 0.95);
+    border: 1px solid rgba(71, 85, 105, 0.3);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.25);
 }
 
-/* Скроллбар */
+.mobile-exam-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.12);
+}
+
+.dark .mobile-exam-card:hover {
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+
+/* Улучшенный скроллбар */
 ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
+    width: 8px;
+    height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-    background: #f1f1f1;
-    border-radius: 3px;
+    background: rgba(241, 245, 249, 0.8);
+    border-radius: 4px;
 }
 
 .dark ::-webkit-scrollbar-track {
-    background: #374151;
+    background: rgba(51, 65, 85, 0.8);
 }
 
 ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #c1c1c1, #a1a1a1);
-    border-radius: 3px;
+    background: linear-gradient(45deg, #cbd5e1, #94a3b8);
+    border-radius: 4px;
+    transition: all 0.3s ease;
 }
 
 .dark ::-webkit-scrollbar-thumb {
-    background: linear-gradient(45deg, #6b7280, #9ca3af);
+    background: linear-gradient(45deg, #64748b, #94a3b8);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #a1a1a1, #888);
+    background: linear-gradient(45deg, #94a3b8, #64748b);
 }
 
 .dark ::-webkit-scrollbar-thumb:hover {
-    background: linear-gradient(45deg, #9ca3af, #d1d5db);
+    background: linear-gradient(45deg, #94a3b8, #cbd5e1);
 }
 
-/* Таблицы */
+/* Таблицы с улучшенным дизайном */
 table {
     border-collapse: collapse;
 }
 
 table th,
 table td {
-    border: 1px solid #e5e7eb;
+    border: 1px solid rgba(226, 232, 240, 0.5);
     transition: all 0.3s ease;
 }
 
 .dark table th,
 .dark table td {
-    border-color: #4b5563;
+    border-color: rgba(71, 85, 105, 0.5);
 }
 
 table tbody tr:hover {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.05), rgba(147, 51, 234, 0.05));
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0.05), rgba(124, 58, 237, 0.05));
 }
 
 .dark table tbody tr:hover {
-    background: linear-gradient(90deg, rgba(59, 130, 246, 0.1), rgba(147, 51, 234, 0.1));
+    background: linear-gradient(90deg, rgba(79, 70, 229, 0.1), rgba(124, 58, 237, 0.1));
 }
 
-/* Формы */
+/* Формы с улучшенным фокусом */
 input:focus,
 select:focus,
 textarea:focus {
     outline: none;
     ring: 2px;
-    ring-color: #3b82f6;
-    border-color: #3b82f6;
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    ring-color: #4f46e5;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
 }
 
 .dark input:focus,
 .dark select:focus,
 .dark textarea:focus {
-    ring-color: #60a5fa;
-    border-color: #60a5fa;
-    box-shadow: 0 0 0 3px rgba(96, 165, 250, 0.1);
+    ring-color: #6366f1;
+    border-color: #6366f1;
+    box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.1);
 }
 
-/* Кнопки */
+/* Кнопки с улучшенными эффектами */
 button {
     transition: all 0.3s ease;
     cursor: pointer;
@@ -220,115 +243,152 @@ button:active {
 /* Навигация */
 .nav-link.active {
     background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(10px);
 }
 
-/* Переходы для темной темы */
+/* Переключатель вида */
+.view-toggle.active {
+    background: #4f46e5 !important;
+    color: white !important;
+}
+
+/* Переходы для темной темы с мягкими цветами */
 * {
     transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
 }
 
-/* Мобильная адаптивность */
+/* Улучшенная мобильная адаптивность */
 @media (max-width: 640px) {
+    .glass-card {
+        margin: 12px;
+        padding: 20px;
+        border-radius: 16px;
+    }
+    
+    /* Улучшенная типографика для мобильных */
+    h1 {
+        font-size: 1.75rem;
+        line-height: 1.3;
+        font-weight: 700;
+    }
+    
+    h2 {
+        font-size: 1.5rem;
+        line-height: 1.4;
+        font-weight: 600;
+    }
+    
+    /* Увеличенные области касания */
+    button {
+        min-height: 48px;
+        padding: 14px 20px;
+        border-radius: 12px;
+        font-weight: 500;
+    }
+    
+    input, select, textarea {
+        min-height: 48px;
+        font-size: 16px; /* Предотвращает зум на iOS */
+        border-radius: 12px;
+        padding: 14px 16px;
+    }
+    
+    /* Мобильные карточки */
+    .schedule-item {
+        padding: 16px;
+        margin-bottom: 12px;
+        border-radius: 12px;
+    }
+    
+    /* Мобильное меню */
+    #mobile-menu {
+        border-top: 1px solid rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(20px);
+    }
+    
+    /* Улучшенные отступы */
+    .space-y-4 > * + * {
+        margin-top: 16px;
+    }
+    
+    /* Модальные окна на мобильных */
+    .modal-content {
+        margin: 20px;
+        max-height: calc(100vh - 40px);
+        overflow-y: auto;
+        border-radius: 20px;
+    }
+    
+    /* Навигация по времени на мобильных */
+    .glass-card .flex {
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .glass-card .flex .flex {
+        flex-direction: row;
+        justify-content: center;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
     .glass-card {
         margin: 8px;
         padding: 16px;
         border-radius: 12px;
     }
     
-    /* Улучшенная типографика для мобильных */
-    h1 {
-        font-size: 1.5rem;
-        line-height: 1.3;
-    }
-    
-    h2 {
-        font-size: 1.25rem;
-        line-height: 1.4;
-    }
-    
-    /* Увеличенные области касания */
-    button {
-        min-height: 44px;
-        padding: 12px 16px;
-    }
-    
-    input, select, textarea {
-        min-height: 44px;
-        font-size: 16px; /* Предотвращает зум на iOS */
-    }
-    
-    /* Мобильные карточки */
-    .schedule-item {
-        padding: 12px;
-        margin-bottom: 8px;
-        border-radius: 8px;
-    }
-    
-    /* Мобильное меню */
-    #mobile-menu {
-        border-top: 1px solid rgba(255, 255, 255, 0.1);
-    }
-    
-    /* Статистические карточки на мобильных */
-    .glass-card {
-        text-align: center;
-    }
-    
-    /* Улучшенные отступы */
-    .space-y-4 > * + * {
-        margin-top: 12px;
-    }
-    
-    /* Модальные окна на мобильных */
-    .modal-content {
-        margin: 16px;
-        max-height: calc(100vh - 32px);
-        overflow-y: auto;
-    }
-}
-
-@media (max-width: 480px) {
-    .glass-card {
-        margin: 4px;
-        padding: 12px;
-    }
-    
     /* Еще более компактные элементы */
     .schedule-item {
-        padding: 8px;
+        padding: 12px;
         font-size: 0.875rem;
     }
     
     /* Компактные кнопки */
     button {
-        padding: 8px 12px;
+        padding: 12px 16px;
         font-size: 0.875rem;
+        min-height: 44px;
     }
     
     /* Компактная навигация */
     nav .flex {
-        padding: 0 8px;
+        padding: 0 12px;
     }
     
     /* Компактные заголовки */
     h1 {
-        font-size: 1.25rem;
+        font-size: 1.5rem;
     }
     
     h2 {
-        font-size: 1.125rem;
+        font-size: 1.25rem;
+    }
+    
+    /* Компактные карточки */
+    .mobile-day-card,
+    .mobile-exam-card {
+        padding: 16px;
+        margin-bottom: 16px;
+    }
+    
+    .mobile-lesson-card {
+        padding: 12px;
+        margin-bottom: 8px;
     }
 }
 
 /* Планшетная адаптивность */
 @media (min-width: 641px) and (max-width: 1024px) {
     .glass-card {
-        padding: 20px;
+        padding: 24px;
+        border-radius: 16px;
     }
     
     /* Оптимизация для планшетов */
     .grid {
-        gap: 16px;
+        gap: 20px;
     }
     
     /* Таблицы на планшетах */
@@ -338,49 +398,13 @@ button:active {
     
     table th,
     table td {
-        padding: 12px;
-    }
-}
-
-/* Печать */
-@media print {
-    .no-print,
-    nav,
-    #toast-container,
-    button,
-    .hidden {
-        display: none !important;
+        padding: 16px;
     }
     
-    .glass-card {
-        background: white !important;
-        box-shadow: none !important;
-        border: 1px solid #ccc !important;
-        break-inside: avoid;
-    }
-    
-    .schedule-item {
-        break-inside: avoid;
-        margin-bottom: 8px;
-        box-shadow: none !important;
-        border: 1px solid #ddd !important;
-    }
-    
-    body {
-        background: white !important;
-        color: black !important;
-    }
-    
-    /* Оптимизация таблиц для печати */
-    table {
-        width: 100% !important;
-        font-size: 0.8rem !important;
-    }
-    
-    table th,
-    table td {
-        padding: 4px !important;
-        border: 1px solid #000 !important;
+    /* Кнопки на планшетах */
+    button {
+        padding: 12px 20px;
+        border-radius: 10px;
     }
 }
 
@@ -390,7 +414,7 @@ a:focus-visible,
 input:focus-visible,
 select:focus-visible,
 textarea:focus-visible {
-    outline: 2px solid #3b82f6;
+    outline: 2px solid #4f46e5;
     outline-offset: 2px;
 }
 
@@ -399,7 +423,7 @@ textarea:focus-visible {
 .dark input:focus-visible,
 .dark select:focus-visible,
 .dark textarea:focus-visible {
-    outline-color: #60a5fa;
+    outline-color: #6366f1;
 }
 
 /* Анимации загрузки */
@@ -409,13 +433,13 @@ textarea:focus-visible {
 }
 
 .fade-in {
-    animation: fadeIn 0.3s ease-in-out;
+    animation: fadeIn 0.4s ease-in-out;
 }
 
 @keyframes fadeIn {
     from {
         opacity: 0;
-        transform: translateY(10px);
+        transform: translateY(20px);
     }
     to {
         opacity: 1;
@@ -425,7 +449,9 @@ textarea:focus-visible {
 
 /* Улучшенные тосты */
 .toast {
-    animation: slideIn 0.3s ease-out;
+    animation: slideIn 0.4s ease-out;
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
 }
 
 @keyframes slideIn {
@@ -442,16 +468,17 @@ textarea:focus-visible {
 /* Высокие разрешения */
 @media (min-width: 1920px) {
     .max-w-7xl {
-        max-width: 1400px;
+        max-width: 1600px;
     }
     
     .glass-card {
-        padding: 32px;
+        padding: 40px;
+        border-radius: 20px;
     }
     
     table th,
     table td {
-        padding: 16px;
+        padding: 20px;
     }
 }
 
@@ -463,22 +490,28 @@ textarea:focus-visible {
     
     nav {
         height: auto;
-        padding: 8px 0;
+        padding: 6px 0;
     }
     
     .glass-card {
-        padding: 12px;
+        padding: 16px;
         margin: 8px;
+    }
+    
+    .mobile-day-card,
+    .mobile-exam-card {
+        padding: 12px;
+        margin-bottom: 12px;
     }
 }
 
-/* Темная тема - дополнительные стили */
+/* Темная тема с мягкими цветами */
 .dark {
     color-scheme: dark;
 }
 
 .dark body {
-    background: linear-gradient(135deg, #1f2937 0%, #111827 50%, #1f2937 100%);
+    background: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #0f172a 100%);
 }
 
 /* Улучшенная доступность */
@@ -493,12 +526,85 @@ textarea:focus-visible {
 /* Высокий контраст */
 @media (prefers-contrast: high) {
     .glass-card {
-        border: 2px solid #000;
-        background: #fff;
+        border: 2px solid #334155;
+        background: #ffffff;
     }
     
     .dark .glass-card {
-        border: 2px solid #fff;
-        background: #000;
+        border: 2px solid #cbd5e1;
+        background: #0f172a;
     }
+}
+
+/* Дополнительные улучшения для мобильных */
+@media (max-width: 640px) {
+    /* Улучшенная навигация по времени */
+    #current-period-display {
+        font-size: 1rem;
+        text-align: center;
+    }
+    
+    #period-type-display {
+        font-size: 0.875rem;
+        text-align: center;
+    }
+    
+    /* Улучшенные кнопки навигации */
+    #prev-period,
+    #next-period,
+    #current-day-btn,
+    #current-week-btn {
+        font-size: 0.875rem;
+        padding: 10px 16px;
+    }
+    
+    /* Переключатель вида */
+    .view-toggle {
+        padding: 10px 16px;
+        font-size: 0.875rem;
+    }
+    
+    /* Улучшенные модальные окна */
+    .fixed.inset-0 > div {
+        margin: 16px;
+        max-height: calc(100vh - 32px);
+    }
+    
+    /* Улучшенные формы в модальных окнах */
+    .fixed.inset-0 input,
+    .fixed.inset-0 select,
+    .fixed.inset-0 textarea {
+        font-size: 16px;
+        padding: 12px 16px;
+    }
+}
+
+/* Анимации для интерактивных элементов */
+.schedule-item,
+.mobile-lesson-card,
+.mobile-exam-card,
+.glass-card {
+    will-change: transform;
+}
+
+/* Оптимизация производительности */
+.schedule-item:hover,
+.mobile-lesson-card:hover,
+.mobile-exam-card:hover,
+.glass-card:hover {
+    will-change: auto;
+}
+
+/* Улучшенные градиенты для темной темы */
+.dark .bg-gradient-to-r {
+    background-image: linear-gradient(to right, var(--tw-gradient-stops));
+}
+
+/* Мягкие тени для темной темы */
+.dark .shadow-xl {
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.4), 0 10px 10px -5px rgba(0, 0, 0, 0.2);
+}
+
+.dark .shadow-2xl {
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
 }
