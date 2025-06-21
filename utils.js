@@ -1,5 +1,5 @@
 /**
- * Утилиты с расширенным функционалом
+ * Утилиты с улучшенным функционалом
  */
 
 /**
@@ -90,9 +90,6 @@ function formatDate(date, format = 'full') {
             day: 'numeric',
             hour: '2-digit',
             minute: '2-digit'
-        },
-        month: {
-            month: 'long'
         }
     };
     
@@ -120,7 +117,7 @@ function formatTime(date) {
 /**
  * Показывает toast уведомление с улучшенным дизайном
  */
-function showToast(message, type = 'info', duration = 5000) {
+function showToast(message, type = 'info', duration = 4000) {
     const container = document.getElementById('toast-container');
     if (!container) return;
     
@@ -128,12 +125,12 @@ function showToast(message, type = 'info', duration = 5000) {
     toast.className = `toast p-4 rounded-xl shadow-2xl mb-3 transform transition-all duration-300 translate-x-full max-w-sm`;
     
     // Определяем цвет и иконку
-    let bgColor = 'bg-gradient-to-r from-indigo-500 to-indigo-600';
+    let bgColor = 'bg-gradient-to-r from-blue-500 to-blue-600';
     let icon = 'fas fa-info-circle';
     
     switch (type) {
         case 'success':
-            bgColor = 'bg-gradient-to-r from-emerald-500 to-emerald-600';
+            bgColor = 'bg-gradient-to-r from-green-500 to-green-600';
             icon = 'fas fa-check-circle';
             break;
         case 'error':
@@ -141,7 +138,7 @@ function showToast(message, type = 'info', duration = 5000) {
             icon = 'fas fa-exclamation-circle';
             break;
         case 'warning':
-            bgColor = 'bg-gradient-to-r from-amber-500 to-orange-500';
+            bgColor = 'bg-gradient-to-r from-yellow-500 to-orange-500';
             icon = 'fas fa-exclamation-triangle';
             break;
     }
@@ -154,7 +151,7 @@ function showToast(message, type = 'info', duration = 5000) {
             <div class="flex-1">
                 <p class="text-sm font-medium leading-relaxed">${message}</p>
             </div>
-            <button class="ml-3 text-white hover:text-slate-200 flex-shrink-0 p-1 rounded hover:bg-black hover:bg-opacity-20 transition-colors" onclick="this.parentElement.parentElement.remove()">
+            <button class="ml-3 text-white hover:text-gray-200 flex-shrink-0 p-1 rounded hover:bg-black hover:bg-opacity-20 transition-colors" onclick="this.parentElement.parentElement.remove()">
                 <i class="fas fa-times text-sm"></i>
             </button>
         </div>
@@ -304,7 +301,7 @@ function formatFileSize(bytes) {
  */
 function getRandomColor() {
     const colors = [
-        '#4f46e5', '#ef4444', '#10b981', '#f59e0b',
+        '#3b82f6', '#ef4444', '#10b981', '#f59e0b',
         '#8b5cf6', '#06b6d4', '#84cc16', '#f97316',
         '#ec4899', '#6366f1', '#14b8a6', '#eab308'
     ];
@@ -385,113 +382,6 @@ function safeExecute(func, fallback = null, context = '') {
     }
 }
 
-/**
- * Анимирует число (счетчик)
- */
-function animateNumber(element, start, end, duration = 1000) {
-    if (!element) return;
-    
-    const range = end - start;
-    const increment = range / (duration / 16);
-    let current = start;
-    
-    const timer = setInterval(() => {
-        current += increment;
-        if ((increment > 0 && current >= end) || (increment < 0 && current <= end)) {
-            current = end;
-            clearInterval(timer);
-        }
-        element.textContent = Math.floor(current);
-    }, 16);
-}
-
-/**
- * Создает элемент с атрибутами
- */
-function createElement(tag, attributes = {}, children = []) {
-    const element = document.createElement(tag);
-    
-    Object.entries(attributes).forEach(([key, value]) => {
-        if (key === 'className') {
-            element.className = value;
-        } else if (key === 'innerHTML') {
-            element.innerHTML = value;
-        } else {
-            element.setAttribute(key, value);
-        }
-    });
-    
-    children.forEach(child => {
-        if (typeof child === 'string') {
-            element.appendChild(document.createTextNode(child));
-        } else {
-            element.appendChild(child);
-        }
-    });
-    
-    return element;
-}
-
-/**
- * Получает параметры URL
- */
-function getUrlParams() {
-    const params = new URLSearchParams(window.location.search);
-    const result = {};
-    
-    for (const [key, value] of params) {
-        result[key] = value;
-    }
-    
-    return result;
-}
-
-/**
- * Устанавливает параметр URL
- */
-function setUrlParam(key, value) {
-    const url = new URL(window.location);
-    url.searchParams.set(key, value);
-    window.history.pushState({}, '', url);
-}
-
-/**
- * Удаляет параметр URL
- */
-function removeUrlParam(key) {
-    const url = new URL(window.location);
-    url.searchParams.delete(key);
-    window.history.pushState({}, '', url);
-}
-
-/**
- * Проверяет, находится ли элемент в области видимости
- */
-function isElementInViewport(element) {
-    const rect = element.getBoundingClientRect();
-    return (
-        rect.top >= 0 &&
-        rect.left >= 0 &&
-        rect.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
-        rect.right <= (window.innerWidth || document.documentElement.clientWidth)
-    );
-}
-
-/**
- * Плавная прокрутка к элементу
- */
-function scrollToElement(element, offset = 0) {
-    if (!element) return;
-    
-    const elementPosition = element.getBoundingClientRect().top;
-    const offsetPosition = elementPosition + window.pageYOffset - offset;
-    
-    window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-    });
-}
-
 // Глобальный обработчик ошибок
 window.addEventListener('error', (event) => {
     logError(event.error, 'Global Error Handler');
@@ -501,9 +391,3 @@ window.addEventListener('error', (event) => {
 window.addEventListener('unhandledrejection', (event) => {
     logError(new Error(event.reason), 'Unhandled Promise Rejection');
 });
-
-// Обработчик изменения размера окна
-window.addEventListener('resize', debounce(() => {
-    // Можно добавить логику для адаптивности
-    console.log('Window resized:', getScreenSize());
-}, 250));
