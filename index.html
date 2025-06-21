@@ -14,9 +14,8 @@
             theme: {
                 extend: {
                     colors: {
-                        primary: '#4f46e5',
-                        secondary: '#7c3aed',
-                        accent: '#06b6d4'
+                        primary: '#2563eb',
+                        secondary: '#3b82f6'
                     },
                     fontFamily: {
                         'sans': ['Inter', 'sans-serif']
@@ -26,53 +25,53 @@
         }
     </script>
 </head>
-<body class="min-h-screen bg-gradient-to-br from-slate-50 via-white to-indigo-50 dark:from-slate-900 dark:via-slate-800 dark:to-slate-900">
+<body class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
     <!-- Страница входа -->
     <div id="login-page" class="min-h-screen flex items-center justify-center p-4">
         <div class="glass-card w-full max-w-md p-6 sm:p-8 space-y-6">
             <div class="text-center">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-indigo-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-blue-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
                     <i class="fas fa-university text-white text-2xl sm:text-3xl"></i>
                 </div>
-                <h1 class="mt-4 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">ТГАСУ</h1>
-                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-300">Войдите в систему управления расписанием</p>
+                <h1 class="mt-4 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">ТГАСУ</h1>
+                <p class="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">Войдите в систему управления расписанием</p>
             </div>
             
             <form id="login-form" class="space-y-4">
                 <div>
-                    <label for="login-email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                    <input type="email" id="login-email" name="email" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" placeholder="Введите ваш email" required>
+                    <label for="login-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="login-email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" placeholder="Введите ваш email" required>
                 </div>
                 
                 <div>
-                    <label for="login-password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Пароль</label>
-                    <input type="password" id="login-password" name="password" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" placeholder="Введите пароль" required>
+                    <label for="login-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Пароль</label>
+                    <input type="password" id="login-password" name="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" placeholder="Введите пароль" required>
                 </div>
                 
-                <button type="submit" class="w-full bg-gradient-to-r from-indigo-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all duration-300 font-medium">
+                <button type="submit" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white py-3 px-4 rounded-lg hover:from-blue-600 hover:to-purple-700 transition-all duration-300 font-medium">
                     Войти
                 </button>
                 
                 <div class="text-center space-y-3">
-                    <button type="button" id="forgot-password" class="text-sm text-indigo-500 hover:text-indigo-700 block w-full">Забыли пароль?</button>
-                    <p class="text-sm text-slate-600 dark:text-slate-300">
+                    <button type="button" id="forgot-password" class="text-sm text-blue-500 hover:text-blue-700 block w-full">Забыли пароль?</button>
+                    <p class="text-sm text-gray-600 dark:text-gray-300">
                         Нет аккаунта? 
-                        <button type="button" id="go-to-register" class="text-indigo-500 hover:text-indigo-700 font-medium">Зарегистрироваться</button>
+                        <button type="button" id="go-to-register" class="text-blue-500 hover:text-blue-700 font-medium">Зарегистрироваться</button>
                     </p>
                 </div>
             </form>
             
             <!-- Демо аккаунты -->
-            <div class="mt-6 p-4 bg-slate-50 dark:bg-slate-700 rounded-lg">
-                <h3 class="text-sm font-medium text-slate-700 dark:text-slate-300 mb-3">Демо аккаунты:</h3>
-                <div class="space-y-2 text-xs text-slate-600 dark:text-slate-400">
-                    <div class="cursor-pointer hover:text-indigo-500 p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors" onclick="fillDemo('student@tgasu.ru', 'student123')">
+            <div class="mt-6 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+                <h3 class="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">Демо аккаунты:</h3>
+                <div class="space-y-2 text-xs text-gray-600 dark:text-gray-400">
+                    <div class="cursor-pointer hover:text-blue-500 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" onclick="fillDemo('student@tgasu.ru', 'student123')">
                         <i class="fas fa-graduation-cap mr-2"></i>Студент: student@tgasu.ru / student123
                     </div>
-                    <div class="cursor-pointer hover:text-indigo-500 p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors" onclick="fillDemo('teacher@tgasu.ru', 'teacher123')">
+                    <div class="cursor-pointer hover:text-blue-500 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" onclick="fillDemo('teacher@tgasu.ru', 'teacher123')">
                         <i class="fas fa-chalkboard-teacher mr-2"></i>Преподаватель: teacher@tgasu.ru / teacher123
                     </div>
-                    <div class="cursor-pointer hover:text-indigo-500 p-2 rounded hover:bg-slate-100 dark:hover:bg-slate-600 transition-colors" onclick="fillDemo('admin@tgasu.ru', 'admin123')">
+                    <div class="cursor-pointer hover:text-blue-500 p-2 rounded hover:bg-gray-100 dark:hover:bg-gray-600 transition-colors" onclick="fillDemo('admin@tgasu.ru', 'admin123')">
                         <i class="fas fa-user-shield mr-2"></i>Администратор: admin@tgasu.ru / admin123
                     </div>
                 </div>
@@ -84,48 +83,48 @@
     <div id="register-page" class="min-h-screen flex items-center justify-center p-4 hidden">
         <div class="glass-card w-full max-w-md p-6 sm:p-8 space-y-6">
             <div class="text-center">
-                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-emerald-500 to-teal-600 rounded-xl flex items-center justify-center shadow-lg">
+                <div class="w-16 h-16 sm:w-20 sm:h-20 mx-auto bg-gradient-to-br from-green-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
                     <i class="fas fa-user-plus text-white text-2xl sm:text-3xl"></i>
                 </div>
-                <h1 class="mt-4 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Регистрация</h1>
-                <p class="mt-2 text-sm sm:text-base text-slate-600 dark:text-slate-300">Создайте аккаунт для доступа к системе</p>
+                <h1 class="mt-4 text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Регистрация</h1>
+                <p class="mt-2 text-sm sm:text-base text-gray-600 dark:text-gray-300">Создайте аккаунт для доступа к системе</p>
             </div>
             
             <form id="register-form" class="space-y-4">
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div>
-                        <label for="register-name" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Имя</label>
-                        <input type="text" id="register-name" name="name" class="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" required>
+                        <label for="register-name" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Имя</label>
+                        <input type="text" id="register-name" name="name" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" required>
                     </div>
                     <div>
-                        <label for="register-surname" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Фамилия</label>
-                        <input type="text" id="register-surname" name="surname" class="w-full px-3 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" required>
+                        <label for="register-surname" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Фамилия</label>
+                        <input type="text" id="register-surname" name="surname" class="w-full px-3 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" required>
                     </div>
                 </div>
                 
                 <div>
-                    <label for="register-email" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Email</label>
-                    <input type="email" id="register-email" name="email" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" required>
+                    <label for="register-email" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Email</label>
+                    <input type="email" id="register-email" name="email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" required>
                 </div>
                 
                 <div>
-                    <label for="register-password" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Пароль</label>
-                    <input type="password" id="register-password" name="password" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" required>
+                    <label for="register-password" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Пароль</label>
+                    <input type="password" id="register-password" name="password" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" required>
                 </div>
                 
                 <div>
-                    <label for="register-role" class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Роль</label>
-                    <select id="register-role" name="role" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" required>
+                    <label for="register-role" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Роль</label>
+                    <select id="register-role" name="role" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" required>
                         <option value="student">Студент</option>
                         <option value="teacher">Преподаватель</option>
                     </select>
                 </div>
                 
                 <div class="flex flex-col sm:flex-row gap-3">
-                    <button type="button" id="back-to-login" class="flex-1 border border-slate-300 text-slate-700 dark:text-slate-300 py-3 px-4 rounded-lg hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors">
+                    <button type="button" id="back-to-login" class="flex-1 border border-gray-300 text-gray-700 dark:text-gray-300 py-3 px-4 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors">
                         Назад
                     </button>
-                    <button type="submit" class="flex-1 bg-gradient-to-r from-emerald-500 to-teal-600 text-white py-3 px-4 rounded-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300">
+                    <button type="submit" class="flex-1 bg-gradient-to-r from-green-500 to-blue-600 text-white py-3 px-4 rounded-lg hover:from-green-600 hover:to-blue-700 transition-all duration-300">
                         Регистрация
                     </button>
                 </div>
@@ -135,19 +134,19 @@
 
     <!-- Модальное окно сброса пароля -->
     <div id="reset-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full">
-            <div class="px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-t-xl">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full">
+            <div class="px-6 py-4 border-b dark:border-gray-700 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-xl">
                 <h3 class="text-lg font-semibold">Сброс пароля</h3>
             </div>
             <div class="px-6 py-6">
-                <p class="text-slate-700 dark:text-slate-300 mb-4">Введите ваш email для получения инструкций по сбросу пароля:</p>
+                <p class="text-gray-700 dark:text-gray-300 mb-4">Введите ваш email для получения инструкций по сбросу пароля:</p>
                 <form id="reset-form">
-                    <input type="email" id="reset-email" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white text-base" placeholder="Введите ваш email" required>
+                    <input type="email" id="reset-email" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white text-base" placeholder="Введите ваш email" required>
                 </form>
             </div>
-            <div class="px-6 py-4 border-t dark:border-slate-700 flex flex-col sm:flex-row justify-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-b-xl">
-                <button id="reset-cancel" class="px-4 py-2 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg">Отмена</button>
-                <button id="reset-confirm" class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg">Отправить</button>
+            <div class="px-6 py-4 border-t dark:border-gray-700 flex flex-col sm:flex-row justify-end gap-3 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
+                <button id="reset-cancel" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg">Отмена</button>
+                <button id="reset-confirm" class="px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg">Отправить</button>
             </div>
         </div>
     </div>
@@ -155,7 +154,7 @@
     <!-- Главное приложение -->
     <div id="app" class="min-h-screen flex flex-col hidden">
         <!-- Навигация -->
-        <nav class="bg-gradient-to-r from-indigo-600 via-purple-600 to-indigo-800 text-white shadow-xl">
+        <nav class="bg-gradient-to-r from-blue-600 via-purple-600 to-blue-800 text-white shadow-xl">
             <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div class="flex justify-between h-16">
                     <div class="flex items-center">
@@ -199,9 +198,9 @@
                             </div>
                             
                             <!-- Выпадающее меню -->
-                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl shadow-2xl bg-white dark:bg-slate-800 z-50">
+                            <div id="user-menu" class="hidden absolute right-0 mt-2 w-48 rounded-xl shadow-2xl bg-white dark:bg-gray-800 z-50">
                                 <div class="py-1">
-                                    <a href="#" class="block px-4 py-3 text-sm text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition-colors" id="profile-link">
+                                    <a href="#" class="block px-4 py-3 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors" id="profile-link">
                                         <i class="fas fa-user mr-3"></i>Профиль
                                     </a>
                                     <a href="#" class="block px-4 py-3 text-sm text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-900 transition-colors" id="logout-btn">
@@ -243,56 +242,40 @@
             <!-- Расписание -->
             <div id="schedule-page" class="page-content space-y-4 sm:space-y-6">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                    <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">Расписание занятий</h2>
+                    <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Расписание занятий</h2>
                     <div class="flex flex-col sm:flex-row gap-2">
-                        <button class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg text-sm hover:from-emerald-600 hover:to-emerald-700 transition-all duration-300 hidden" id="add-lesson-btn">
+                        <button class="px-4 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg text-sm hover:from-blue-600 hover:to-blue-700 transition-all duration-300" onclick="window.print()">
+                            <i class="fas fa-print mr-2"></i>Печать
+                        </button>
+                        <button class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg text-sm hover:from-orange-600 hover:to-orange-700 transition-all duration-300 hidden" id="add-lesson-btn">
                             <i class="fas fa-plus mr-2"></i>Добавить занятие
                         </button>
                     </div>
                 </div>
                 
-                <!-- Навигация по времени -->
+                <!-- Навигация по неделям -->
                 <div class="glass-card p-4 sm:p-6 rounded-xl">
-                    <div class="flex flex-col space-y-4">
-                        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                            <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-                                <button class="px-3 py-2 text-indigo-500 border border-indigo-500 rounded-lg text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors" id="prev-period">
-                                    <i class="fas fa-chevron-left mr-2"></i>Предыдущий
-                                </button>
-                                <div class="text-center">
-                                    <div class="text-base sm:text-lg font-semibold text-slate-800 dark:text-white" id="current-period-display">
-                                        <!-- Период времени -->
-                                    </div>
-                                    <div class="text-sm text-slate-600 dark:text-slate-400" id="period-type-display">
-                                        <!-- Тип периода -->
-                                    </div>
+                    <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
+                            <button class="px-3 py-2 text-blue-500 border border-blue-500 rounded-lg text-sm hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors" id="prev-week">
+                                <i class="fas fa-chevron-left mr-2"></i>Предыдущая
+                            </button>
+                            <div class="text-center">
+                                <div class="text-base sm:text-lg font-semibold text-gray-800 dark:text-white" id="current-week-display">
+                                    <!-- Дата недели -->
                                 </div>
-                                <button class="px-3 py-2 text-indigo-500 border border-indigo-500 rounded-lg text-sm hover:bg-indigo-50 dark:hover:bg-indigo-900 transition-colors" id="next-period">
-                                    Следующий<i class="fas fa-chevron-right ml-2"></i>
-                                </button>
+                                <div class="text-sm text-gray-600 dark:text-gray-400" id="week-type-display">
+                                    <!-- Тип недели -->
+                                </div>
                             </div>
-                            
-                            <div class="flex gap-2">
-                                <button class="px-4 py-2 bg-gradient-to-r from-slate-500 to-slate-600 text-white rounded-lg text-sm hover:from-slate-600 hover:to-slate-700 transition-all duration-300" id="current-day-btn">
-                                    <i class="fas fa-calendar-day mr-2"></i>Текущий день
-                                </button>
-                                <button class="px-4 py-2 bg-gradient-to-r from-slate-500 to-slate-600 text-white rounded-lg text-sm hover:from-slate-600 hover:to-slate-700 transition-all duration-300" id="current-week-btn">
-                                    <i class="fas fa-calendar-week mr-2"></i>Текущая неделя
-                                </button>
-                            </div>
+                            <button class="px-3 py-2 text-blue-500 border border-blue-500 rounded-lg text-sm hover:bg-blue-50 dark:hover:bg-blue-900 transition-colors" id="next-week">
+                                Следующая<i class="fas fa-chevron-right ml-2"></i>
+                            </button>
                         </div>
                         
-                        <!-- Переключатель вида -->
-                        <div class="flex justify-center">
-                            <div class="bg-slate-100 dark:bg-slate-700 rounded-lg p-1 flex">
-                                <button class="view-toggle px-4 py-2 rounded-md text-sm font-medium transition-colors active" data-view="week">
-                                    Неделя
-                                </button>
-                                <button class="view-toggle px-4 py-2 rounded-md text-sm font-medium transition-colors" data-view="month">
-                                    Месяц
-                                </button>
-                            </div>
-                        </div>
+                        <button class="px-4 py-2 bg-gradient-to-r from-gray-500 to-gray-600 text-white rounded-lg text-sm hover:from-gray-600 hover:to-gray-700 transition-all duration-300" id="current-week-btn">
+                            <i class="fas fa-calendar-day mr-2"></i>Текущая неделя
+                        </button>
                     </div>
                 </div>
                 
@@ -301,7 +284,7 @@
                     <div class="overflow-x-auto">
                         <table class="w-full border-collapse" id="schedule-table">
                             <thead>
-                                <tr class="bg-gradient-to-r from-indigo-500 to-purple-600 text-white">
+                                <tr class="bg-gradient-to-r from-blue-500 to-purple-600 text-white">
                                     <th class="p-4 text-center font-semibold">Время</th>
                                     <th class="p-4 text-center font-semibold">Понедельник</th>
                                     <th class="p-4 text-center font-semibold">Вторник</th>
@@ -327,8 +310,8 @@
             <!-- Консультации -->
             <div id="consultations-page" class="page-content space-y-4 sm:space-y-6 hidden">
                 <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4">
-                    <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-emerald-600 to-teal-600 bg-clip-text text-transparent">Консультации</h2>
-                    <button class="px-4 sm:px-6 py-3 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg shadow-lg hover:from-emerald-600 hover:to-teal-700 transition-all duration-300 hidden" id="add-consultation-btn">
+                    <h2 class="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Консультации</h2>
+                    <button class="px-4 sm:px-6 py-3 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg shadow-lg hover:from-green-600 hover:to-blue-700 transition-all duration-300 hidden" id="add-consultation-btn">
                         <i class="fas fa-plus mr-2"></i>Добавить консультацию
                     </button>
                 </div>
@@ -360,7 +343,6 @@
                                     <th class="p-4 text-left font-semibold">Время</th>
                                     <th class="p-4 text-left font-semibold">Группы</th>
                                     <th class="p-4 text-left font-semibold">Статус</th>
-                                    <th class="p-4 text-left font-semibold">Действия</th>
                                 </tr>
                             </thead>
                             <tbody id="exams-table-body">
@@ -383,22 +365,22 @@
                 <!-- Статистика -->
                 <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                     <div class="glass-card p-4 sm:p-6 rounded-xl flex flex-col sm:flex-row items-center">
-                        <div class="bg-gradient-to-br from-indigo-500 to-indigo-600 text-white p-3 sm:p-4 rounded-xl mb-3 sm:mb-0 sm:mr-4">
+                        <div class="bg-gradient-to-br from-blue-500 to-blue-600 text-white p-3 sm:p-4 rounded-xl mb-3 sm:mb-0 sm:mr-4">
                             <i class="fas fa-users text-xl sm:text-2xl"></i>
                         </div>
                         <div class="text-center sm:text-left">
-                            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Пользователи</p>
-                            <p class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white" id="users-count">3</p>
+                            <p class="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">Пользователи</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white" id="users-count">3</p>
                         </div>
                     </div>
                     
                     <div class="glass-card p-4 sm:p-6 rounded-xl flex flex-col sm:flex-row items-center">
-                        <div class="bg-gradient-to-br from-emerald-500 to-emerald-600 text-white p-3 sm:p-4 rounded-xl mb-3 sm:mb-0 sm:mr-4">
+                        <div class="bg-gradient-to-br from-green-500 to-green-600 text-white p-3 sm:p-4 rounded-xl mb-3 sm:mb-0 sm:mr-4">
                             <i class="fas fa-graduation-cap text-xl sm:text-2xl"></i>
                         </div>
                         <div class="text-center sm:text-left">
-                            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Студенты</p>
-                            <p class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white" id="students-count">1</p>
+                            <p class="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">Студенты</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white" id="students-count">1</p>
                         </div>
                     </div>
                     
@@ -407,8 +389,8 @@
                             <i class="fas fa-chalkboard-teacher text-xl sm:text-2xl"></i>
                         </div>
                         <div class="text-center sm:text-left">
-                            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Преподаватели</p>
-                            <p class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white" id="teachers-count">1</p>
+                            <p class="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">Преподаватели</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white" id="teachers-count">1</p>
                         </div>
                     </div>
                     
@@ -417,37 +399,9 @@
                             <i class="fas fa-university text-xl sm:text-2xl"></i>
                         </div>
                         <div class="text-center sm:text-left">
-                            <p class="text-slate-500 dark:text-slate-400 text-xs sm:text-sm">Администраторы</p>
-                            <p class="text-2xl sm:text-3xl font-bold text-slate-800 dark:text-white" id="admins-count">1</p>
+                            <p class="text-gray-500 dark:text-gray-400 text-xs sm:text-sm">Администраторы</p>
+                            <p class="text-2xl sm:text-3xl font-bold text-gray-800 dark:text-white" id="admins-count">1</p>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Управление пользователями -->
-                <div class="glass-card p-6 rounded-xl">
-                    <div class="flex justify-between items-center mb-6">
-                        <h3 class="text-xl font-semibold text-slate-800 dark:text-white">Управление пользователями</h3>
-                        <button class="px-4 py-2 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-lg hover:from-indigo-600 hover:to-purple-700 transition-all duration-300" id="add-user-btn">
-                            <i class="fas fa-plus mr-2"></i>Добавить пользователя
-                        </button>
-                    </div>
-                    
-                    <div class="overflow-x-auto">
-                        <table class="w-full border-collapse">
-                            <thead>
-                                <tr class="bg-slate-100 dark:bg-slate-700">
-                                    <th class="p-3 text-left font-semibold text-slate-700 dark:text-slate-300">ID</th>
-                                    <th class="p-3 text-left font-semibold text-slate-700 dark:text-slate-300">Имя</th>
-                                    <th class="p-3 text-left font-semibold text-slate-700 dark:text-slate-300">Email</th>
-                                    <th class="p-3 text-left font-semibold text-slate-700 dark:text-slate-300">Роль</th>
-                                    <th class="p-3 text-left font-semibold text-slate-700 dark:text-slate-300">Статус</th>
-                                    <th class="p-3 text-left font-semibold text-slate-700 dark:text-slate-300">Действия</th>
-                                </tr>
-                            </thead>
-                            <tbody id="users-table-body">
-                                <!-- Данные пользователей -->
-                            </tbody>
-                        </table>
                     </div>
                 </div>
             </div>
@@ -455,79 +409,37 @@
     </div>
     
     <!-- Модальные окна -->
-    <!-- Модальное окно профиля -->
-    <div id="profile-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-t-xl">
-                <h3 class="text-lg font-semibold">Профиль пользователя</h3>
-            </div>
-            <div class="px-6 py-6">
-                <div class="text-center mb-6">
-                    <img class="h-20 w-20 rounded-full mx-auto mb-4" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=80&h=80&fit=crop&crop=face" alt="User">
-                    <h4 class="text-xl font-semibold text-slate-800 dark:text-white" id="profile-name">Имя пользователя</h4>
-                    <p class="text-slate-600 dark:text-slate-400" id="profile-email">email@example.com</p>
-                </div>
-                
-                <div class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Роль</label>
-                        <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-800 dark:text-white" id="profile-role">
-                            Студент
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">ID пользователя</label>
-                        <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-800 dark:text-white" id="profile-id">
-                            ST001
-                        </div>
-                    </div>
-                    
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Дата регистрации</label>
-                        <div class="px-3 py-2 bg-slate-100 dark:bg-slate-700 rounded-lg text-slate-800 dark:text-white" id="profile-created">
-                            01.01.2024
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div class="px-6 py-4 border-t dark:border-slate-700 flex justify-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-b-xl">
-                <button id="profile-close" class="px-4 py-2 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg">Закрыть</button>
-            </div>
-        </div>
-    </div>
-    
     <!-- Модальное окно добавления/редактирования занятия -->
     <div id="lesson-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-t-xl">
+        <div class="bg-white dark:bg-gray-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
+            <div class="px-6 py-4 border-b dark:border-gray-700 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-xl">
                 <h3 class="text-lg font-semibold" id="lesson-modal-title">Добавить занятие</h3>
             </div>
             <div class="px-6 py-6">
                 <form id="lesson-form" class="space-y-4">
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Предмет</label>
-                        <input type="text" id="lesson-subject" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Предмет</label>
+                        <input type="text" id="lesson-subject" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Тип занятия</label>
-                        <select id="lesson-type" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Тип занятия</label>
+                        <select id="lesson-type" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                             <option value="Лекция">Лекция</option>
                             <option value="Практика">Практика</option>
                             <option value="Лабораторная">Лабораторная</option>
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Преподаватель</label>
-                        <input type="text" id="lesson-teacher" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Преподаватель</label>
+                        <input type="text" id="lesson-teacher" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Аудитория</label>
-                        <input type="text" id="lesson-room" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Аудитория</label>
+                        <input type="text" id="lesson-room" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">День недели</label>
-                        <select id="lesson-day" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">День недели</label>
+                        <select id="lesson-day" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                             <option value="0">Понедельник</option>
                             <option value="1">Вторник</option>
                             <option value="2">Среда</option>
@@ -537,8 +449,8 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Время</label>
-                        <select id="lesson-time" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Время</label>
+                        <select id="lesson-time" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" required>
                             <option value="8:00-9:30">8:00-9:30</option>
                             <option value="9:40-11:10">9:40-11:10</option>
                             <option value="11:20-12:50">11:20-12:50</option>
@@ -548,109 +460,14 @@
                         </select>
                     </div>
                     <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Группы</label>
-                        <input type="text" id="lesson-groups" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="ПГС-101, ПГС-102" required>
+                        <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Группы</label>
+                        <input type="text" id="lesson-groups" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-500 dark:bg-gray-700 dark:border-gray-600 dark:text-white" placeholder="ПГС-101, ПГС-102" required>
                     </div>
                 </form>
             </div>
-            <div class="px-6 py-4 border-t dark:border-slate-700 flex flex-col sm:flex-row justify-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-b-xl">
-                <button id="lesson-cancel" class="px-4 py-2 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg">Отмена</button>
-                <button id="lesson-save" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-emerald-600 text-white rounded-lg">Сохранить</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Модальное окно консультации -->
-    <div id="consultation-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-t-xl">
-                <h3 class="text-lg font-semibold" id="consultation-modal-title">Добавить консультацию</h3>
-            </div>
-            <div class="px-6 py-6">
-                <form id="consultation-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Предмет</label>
-                        <input type="text" id="consultation-subject" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Преподаватель</label>
-                        <input type="text" id="consultation-teacher" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Дата</label>
-                        <input type="date" id="consultation-date" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Время</label>
-                        <input type="time" id="consultation-time" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Аудитория</label>
-                        <input type="text" id="consultation-room" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Группы</label>
-                        <input type="text" id="consultation-groups" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="ПГС-101, ПГС-102" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Комментарий</label>
-                        <textarea id="consultation-comment" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-emerald-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" rows="3" placeholder="Дополнительная информация"></textarea>
-                    </div>
-                </form>
-            </div>
-            <div class="px-6 py-4 border-t dark:border-slate-700 flex flex-col sm:flex-row justify-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-b-xl">
-                <button id="consultation-cancel" class="px-4 py-2 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg">Отмена</button>
-                <button id="consultation-save" class="px-4 py-2 bg-gradient-to-r from-emerald-500 to-teal-600 text-white rounded-lg">Сохранить</button>
-            </div>
-        </div>
-    </div>
-    
-    <!-- Модальное окно экзамена -->
-    <div id="exam-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden flex items-center justify-center p-4">
-        <div class="bg-white dark:bg-slate-800 rounded-xl shadow-2xl max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <div class="px-6 py-4 border-b dark:border-slate-700 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-t-xl">
-                <h3 class="text-lg font-semibold" id="exam-modal-title">Добавить экзамен</h3>
-            </div>
-            <div class="px-6 py-6">
-                <form id="exam-form" class="space-y-4">
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Предмет</label>
-                        <input type="text" id="exam-subject" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Преподаватель</label>
-                        <input type="text" id="exam-teacher" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Дата</label>
-                        <input type="date" id="exam-date" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Время</label>
-                        <input type="time" id="exam-time" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Аудитория</label>
-                        <input type="text" id="exam-room" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Группы</label>
-                        <input type="text" id="exam-groups" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" placeholder="ПГС-101, ПГС-102" required>
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Статус</label>
-                        <select id="exam-status" class="w-full px-4 py-3 border border-slate-300 rounded-lg focus:ring-2 focus:ring-red-500 dark:bg-slate-700 dark:border-slate-600 dark:text-white" required>
-                            <option value="Запланирован">Запланирован</option>
-                            <option value="Подтвержден">Подтвержден</option>
-                            <option value="Перенесен">Перенесен</option>
-                            <option value="В процессе">В процессе</option>
-                        </select>
-                    </div>
-                </form>
-            </div>
-            <div class="px-6 py-4 border-t dark:border-slate-700 flex flex-col sm:flex-row justify-end gap-3 bg-slate-50 dark:bg-slate-700 rounded-b-xl">
-                <button id="exam-cancel" class="px-4 py-2 bg-slate-200 dark:bg-slate-600 text-slate-700 dark:text-slate-300 rounded-lg">Отмена</button>
-                <button id="exam-save" class="px-4 py-2 bg-gradient-to-r from-red-500 to-orange-600 text-white rounded-lg">Сохранить</button>
+            <div class="px-6 py-4 border-t dark:border-gray-700 flex flex-col sm:flex-row justify-end gap-3 bg-gray-50 dark:bg-gray-700 rounded-b-xl">
+                <button id="lesson-cancel" class="px-4 py-2 bg-gray-200 dark:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-lg">Отмена</button>
+                <button id="lesson-save" class="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-lg">Сохранить</button>
             </div>
         </div>
     </div>
