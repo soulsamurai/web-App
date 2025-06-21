@@ -1,5 +1,5 @@
 /**
- * Модуль интерфейса с расширенным функционалом
+ * Модуль интерфейса с полной мобильной адаптивностью
  */
 
 /**
@@ -11,8 +11,7 @@ function initializeUI() {
     updateConsultationsUI();
     updateExamsUI();
     updateAdminUI();
-    updatePeriodDisplay();
-    updateViewToggle();
+    updateWeekDisplay();
 }
 
 /**
@@ -85,29 +84,23 @@ function updateUserProfile() {
 }
 
 /**
- * Обновляет отображение периода
+ * Обновляет отображение недели
  */
-function updatePeriodDisplay() {
-    const periodDisplayElement = document.getElementById('current-period-display');
-    const periodTypeElement = document.getElementById('period-type-display');
+function updateWeekDisplay() {
+    const currentWeek = getCurrentWeekDate();
+    const weekEnd = new Date(currentWeek);
+    weekEnd.setDate(weekEnd.getDate() + 6);
     
-    if (!periodDisplayElement || !periodTypeElement) return;
+    const weekDisplayElement = document.getElementById('current-week-display');
+    const weekTypeElement = document.getElementById('week-type-display');
     
-    if (currentView === 'week') {
-        const currentWeek = getCurrentWeekDate();
-        const weekEnd = new Date(currentWeek);
-        weekEnd.setDate(weekEnd.getDate() + 6);
-        
-        periodDisplayElement.textContent = `${formatDate(currentWeek, 'short')} - ${formatDate(weekEnd, 'short')}`;
-        
+    if (weekDisplayElement) {
+        weekDisplayElement.textContent = `${formatDate(currentWeek, 'short')} - ${formatDate(weekEnd, 'short')}`;
+    }
+    
+    if (weekTypeElement) {
         const isEven = isEvenWeek(currentWeek);
-        periodTypeElement.textContent = isEven ? 'Четная неделя' : 'Нечетная неделя';
-    } else {
-        const currentMonth = getCurrentMonthDate();
-        const monthEnd = new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1, 0);
-        
-        periodDisplayElement.textContent = `${formatDate(currentMonth, 'month')} ${currentMonth.getFullYear()}`;
-        periodTypeElement.textContent = 'Месячный вид';
+        weekTypeElement.textContent = isEven ? 'Четная неделя' : 'Нечетная неделя';
     }
 }
 
@@ -127,25 +120,10 @@ function getCurrentWeekDate() {
 }
 
 /**
- * Получает дату текущего месяца с учетом смещения
- */
-function getCurrentMonthDate() {
-    const now = new Date();
-    now.setMonth(now.getMonth() + Math.floor(currentWeekOffset / 4));
-    return new Date(now.getFullYear(), now.getMonth(), 1);
-}
-
-/**
  * Обновляет интерфейс расписания
  */
 function updateScheduleUI() {
-    let schedule;
-    
-    if (currentView === 'week') {
-        schedule = getScheduleForWeek();
-    } else {
-        schedule = getScheduleForMonth();
-    }
+    const schedule = getScheduleForWeek();
     
     // Обновляем десктопную таблицу
     updateDesktopSchedule(schedule);
@@ -188,18 +166,18 @@ function updateDesktopSchedule(schedule) {
     // Создаем строки таблицы
     timeSlots.forEach(time => {
         const row = document.createElement('tr');
-        row.className = 'border-b border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700';
+        row.className = 'border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700';
         
         // Ячейка времени
         const timeCell = document.createElement('td');
-        timeCell.className = 'bg-gradient-to-r from-slate-100 to-slate-200 dark:from-slate-700 dark:to-slate-600 p-4 text-center border-r border-slate-200 dark:border-slate-600 font-medium text-slate-800 dark:text-slate-200';
+        timeCell.className = 'bg-gradient-to-r from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-600 p-4 text-center border-r border-gray-200 dark:border-gray-600 font-medium text-gray-800 dark:text-gray-200';
         timeCell.textContent = time;
         row.appendChild(timeCell);
         
         // Ячейки для каждого дня
         for (let day = 0; day < days; day++) {
             const cell = document.createElement('td');
-            cell.className = 'p-3 border-r border-slate-200 dark:border-slate-600 min-h-[100px] align-top';
+            cell.className = 'p-3 border-r border-gray-200 dark:border-gray-600 min-h-[100px] align-top';
             
             const lessons = grid[time][day];
             if (lessons && lessons.length > 0) {
@@ -208,7 +186,7 @@ function updateDesktopSchedule(schedule) {
                     cell.appendChild(lessonElement);
                 });
             } else {
-                cell.innerHTML = '<div class="text-slate-400 text-center text-sm">—</div>';
+                cell.innerHTML = '<div class="text-gray-400 text-center text-sm">—</div>';
             }
             
             row.appendChild(cell);
@@ -245,21 +223,16 @@ function updateMobileSchedule(schedule) {
         dayCard.className = 'mobile-day-card';
         
         const dayHeader = document.createElement('h3');
-        dayHeader.className = 'text-lg font-semibold text-slate-800 dark:text-white mb-3 flex items-center';
-        
-        // Выделяем текущий день
-        const today = new Date().getDay();
-        const isToday = (today === 0 ? 6 : today - 1) === day;
-        
+        dayHeader.className = 'text-lg font-semibold text-gray-800 dark:text-white mb-3 flex items-center';
         dayHeader.innerHTML = `
-            <i class="fas fa-calendar-day mr-2 ${isToday ? 'text-indigo-500' : 'text-slate-500'}"></i>
-            ${dayNames[day]} ${isToday ? '<span class="text-sm text-indigo-500 ml-2">(сегодня)</span>' : ''}
+            <i class="fas fa-calendar-day mr-2 text-blue-500"></i>
+            ${dayNames[day]}
         `;
         dayCard.appendChild(dayHeader);
         
         if (dayLessons.length === 0) {
             const emptyMessage = document.createElement('div');
-            emptyMessage.className = 'text-slate-500 dark:text-slate-400 text-center py-4';
+            emptyMessage.className = 'text-gray-500 dark:text-gray-400 text-center py-4';
             emptyMessage.textContent = 'Нет занятий';
             dayCard.appendChild(emptyMessage);
         } else {
@@ -295,14 +268,14 @@ function createMobileLessonCard(lesson) {
     
     card.innerHTML = `
         <div class="flex justify-between items-start mb-2">
-            <div class="font-semibold text-slate-800 dark:text-white">${lesson.subject}</div>
-            <div class="text-xs text-slate-500 dark:text-slate-400 bg-slate-100 dark:bg-slate-600 px-2 py-1 rounded">
+            <div class="font-semibold text-gray-800 dark:text-white">${lesson.subject}</div>
+            <div class="text-xs text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-600 px-2 py-1 rounded">
                 ${lesson.type}
             </div>
         </div>
-        <div class="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+        <div class="space-y-1 text-sm text-gray-600 dark:text-gray-400">
             <div class="flex items-center">
-                <i class="fas fa-clock mr-2 w-4 text-indigo-500"></i>
+                <i class="fas fa-clock mr-2 w-4 text-blue-500"></i>
                 <span>${lesson.time}</span>
             </div>
             <div class="flex items-center">
@@ -310,7 +283,7 @@ function createMobileLessonCard(lesson) {
                 <span>Ауд. ${lesson.room}</span>
             </div>
             <div class="flex items-center">
-                <i class="fas fa-user mr-2 w-4 text-emerald-500"></i>
+                <i class="fas fa-user mr-2 w-4 text-green-500"></i>
                 <span>${lesson.teacher}</span>
             </div>
             ${lesson.groups ? `
@@ -322,7 +295,7 @@ function createMobileLessonCard(lesson) {
         </div>
         ${canEdit ? `
             <div class="mt-3 flex gap-2">
-                <button class="flex-1 text-xs text-indigo-600 hover:text-indigo-800 p-2 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors" onclick="editLesson('${lesson.id}')">
+                <button class="flex-1 text-xs text-blue-600 hover:text-blue-800 p-2 rounded hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors" onclick="editLesson('${lesson.id}')">
                     <i class="fas fa-edit mr-1"></i>Редактировать
                 </button>
                 <button class="flex-1 text-xs text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors" onclick="deleteLesson('${lesson.id}')">
@@ -342,9 +315,9 @@ function createScheduleItem(lesson) {
     const div = document.createElement('div');
     
     // Определяем цвет в зависимости от типа занятия
-    let colorClass = 'border-indigo-500 bg-gradient-to-r from-indigo-50 to-indigo-100 dark:from-indigo-900 dark:to-indigo-800';
+    let colorClass = 'border-blue-500 bg-gradient-to-r from-blue-50 to-blue-100 dark:from-blue-900 dark:to-blue-800';
     if (lesson.type === 'Практика') {
-        colorClass = 'border-emerald-500 bg-gradient-to-r from-emerald-50 to-emerald-100 dark:from-emerald-900 dark:to-emerald-800';
+        colorClass = 'border-green-500 bg-gradient-to-r from-green-50 to-green-100 dark:from-green-900 dark:to-green-800';
     } else if (lesson.type === 'Лабораторная') {
         colorClass = 'border-purple-500 bg-gradient-to-r from-purple-50 to-purple-100 dark:from-purple-900 dark:to-purple-800';
     }
@@ -355,20 +328,20 @@ function createScheduleItem(lesson) {
     const canEdit = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
     
     div.innerHTML = `
-        <div class="font-semibold text-slate-800 dark:text-white text-sm">${lesson.subject}</div>
-        <div class="text-xs text-slate-600 dark:text-slate-400 mt-1">${lesson.type}</div>
-        <div class="text-xs text-slate-600 dark:text-slate-400 flex items-center mt-1">
+        <div class="font-semibold text-gray-800 dark:text-white text-sm">${lesson.subject}</div>
+        <div class="text-xs text-gray-600 dark:text-gray-400 mt-1">${lesson.type}</div>
+        <div class="text-xs text-gray-600 dark:text-gray-400 flex items-center mt-1">
             <i class="fas fa-door-open mr-1"></i>
             Ауд. ${lesson.room}
         </div>
-        <div class="text-xs text-slate-600 dark:text-slate-400 flex items-center mt-1">
+        <div class="text-xs text-gray-600 dark:text-gray-400 flex items-center mt-1">
             <i class="fas fa-user mr-1"></i>
             ${lesson.teacher}
         </div>
-        ${lesson.groups ? `<div class="text-xs text-slate-500 dark:text-slate-500 mt-1">${lesson.groups.join(', ')}</div>` : ''}
+        ${lesson.groups ? `<div class="text-xs text-gray-500 dark:text-gray-500 mt-1">${lesson.groups.join(', ')}</div>` : ''}
         ${canEdit ? `
             <div class="mt-2 flex gap-1">
-                <button class="text-xs text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors" onclick="editLesson('${lesson.id}')">
+                <button class="text-xs text-blue-600 hover:text-blue-800 p-1 rounded hover:bg-blue-100 dark:hover:bg-blue-900 transition-colors" onclick="editLesson('${lesson.id}')">
                     <i class="fas fa-edit"></i>
                 </button>
                 <button class="text-xs text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors" onclick="deleteLesson('${lesson.id}')">
@@ -396,8 +369,8 @@ function updateConsultationsUI() {
     if (consultations.length === 0) {
         container.innerHTML = `
             <div class="col-span-full text-center py-12">
-                <i class="fas fa-comments text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
-                <p class="text-slate-500 dark:text-slate-400 text-lg">Нет запланированных консультаций</p>
+                <i class="fas fa-comments text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 text-lg">Нет запланированных консультаций</p>
             </div>
         `;
     } else {
@@ -418,17 +391,14 @@ function createConsultationItem(consultation) {
     const consultationDate = new Date(consultation.date);
     const isUpcoming = consultationDate > new Date();
     
-    const currentUser = getCurrentUser();
-    const canEdit = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
-    
     div.innerHTML = `
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-start mb-4 gap-2">
             <div>
-                <h3 class="font-semibold text-lg text-emerald-700 dark:text-emerald-400 flex items-center">
+                <h3 class="font-semibold text-lg text-green-700 dark:text-green-400 flex items-center">
                     <i class="fas fa-comments mr-2"></i>
                     ${consultation.subject}
                 </h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400 flex items-center mt-1">
+                <p class="text-sm text-gray-600 dark:text-gray-400 flex items-center mt-1">
                     <i class="fas fa-user mr-2"></i>
                     ${consultation.teacher}
                 </p>
@@ -437,41 +407,30 @@ function createConsultationItem(consultation) {
         </div>
         
         <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
-                <i class="far fa-calendar mr-3 w-4 text-emerald-500"></i>
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                <i class="far fa-calendar mr-3 w-4 text-green-500"></i>
                 <span>${formatDate(consultationDate)}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
-                <i class="far fa-clock mr-3 w-4 text-indigo-500"></i>
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                <i class="far fa-clock mr-3 w-4 text-blue-500"></i>
                 <span>${consultation.time}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 <i class="fas fa-door-open mr-3 w-4 text-purple-500"></i>
                 <span>Ауд. ${consultation.room}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 <i class="fas fa-users mr-3 w-4 text-orange-500"></i>
                 <span>Группы: ${consultation.groups}</span>
             </div>
         </div>
         
         ${consultation.comment ? `
-            <div class="bg-slate-50 dark:bg-slate-700 p-3 rounded-lg mb-4">
-                <p class="text-sm text-slate-700 dark:text-slate-300 flex items-start">
-                    <i class="fas fa-info-circle mr-2 mt-0.5 text-indigo-500"></i>
+            <div class="bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
+                <p class="text-sm text-gray-700 dark:text-gray-300 flex items-start">
+                    <i class="fas fa-info-circle mr-2 mt-0.5 text-blue-500"></i>
                     ${consultation.comment}
                 </p>
-            </div>
-        ` : ''}
-        
-        ${canEdit ? `
-            <div class="flex gap-2 pt-3 border-t border-slate-200 dark:border-slate-600">
-                <button class="flex-1 text-sm text-indigo-600 hover:text-indigo-800 p-2 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors" onclick="editConsultation('${consultation.id}')">
-                    <i class="fas fa-edit mr-1"></i>Редактировать
-                </button>
-                <button class="flex-1 text-sm text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors" onclick="deleteConsultation('${consultation.id}')">
-                    <i class="fas fa-trash mr-1"></i>Удалить
-                </button>
             </div>
         ` : ''}
     `;
@@ -506,9 +465,9 @@ function updateDesktopExams(exams) {
     if (exams.length === 0) {
         tableBody.innerHTML = `
             <tr>
-                <td colspan="8" class="text-center py-12">
-                    <i class="fas fa-file-alt text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
-                    <p class="text-slate-500 dark:text-slate-400 text-lg">Нет запланированных экзаменов</p>
+                <td colspan="7" class="text-center py-12">
+                    <i class="fas fa-file-alt text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                    <p class="text-gray-500 dark:text-gray-400 text-lg">Нет запланированных экзаменов</p>
                 </td>
             </tr>
         `;
@@ -534,8 +493,8 @@ function updateMobileExams(exams) {
     if (exams.length === 0) {
         mobileContainer.innerHTML = `
             <div class="text-center py-12">
-                <i class="fas fa-file-alt text-6xl text-slate-300 dark:text-slate-600 mb-4"></i>
-                <p class="text-slate-500 dark:text-slate-400 text-lg">Нет запланированных экзаменов</p>
+                <i class="fas fa-file-alt text-6xl text-gray-300 dark:text-gray-600 mb-4"></i>
+                <p class="text-gray-500 dark:text-gray-400 text-lg">Нет запланированных экзаменов</p>
             </div>
         `;
     } else {
@@ -556,53 +515,39 @@ function createMobileExamCard(exam) {
     const examDate = new Date(exam.date);
     const isUpcoming = examDate > new Date();
     
-    const currentUser = getCurrentUser();
-    const canEdit = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
-    
     card.innerHTML = `
         <div class="flex justify-between items-start mb-3">
             <div>
                 <h3 class="font-semibold text-lg text-red-700 dark:text-red-400">${exam.subject}</h3>
-                <p class="text-sm text-slate-600 dark:text-slate-400">${exam.teacher}</p>
+                <p class="text-sm text-gray-600 dark:text-gray-400">${exam.teacher}</p>
             </div>
             ${isUpcoming ? '<div class="bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 px-2 py-1 rounded-full text-xs">Предстоящий</div>' : ''}
         </div>
         
-        <div class="space-y-2 mb-4">
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
+        <div class="space-y-2">
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 <i class="far fa-calendar mr-3 w-4 text-red-500"></i>
                 <span>${formatDate(examDate)}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
-                <i class="far fa-clock mr-3 w-4 text-indigo-500"></i>
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                <i class="far fa-clock mr-3 w-4 text-blue-500"></i>
                 <span>${exam.time}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 <i class="fas fa-door-open mr-3 w-4 text-purple-500"></i>
                 <span>Ауд. ${exam.room}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
                 <i class="fas fa-users mr-3 w-4 text-orange-500"></i>
                 <span>${exam.groups}</span>
             </div>
-            <div class="flex items-center text-sm text-slate-600 dark:text-slate-400">
-                <i class="fas fa-info-circle mr-3 w-4 text-emerald-500"></i>
+            <div class="flex items-center text-sm text-gray-600 dark:text-gray-400">
+                <i class="fas fa-info-circle mr-3 w-4 text-green-500"></i>
                 <span class="px-2 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 rounded text-xs">
                     ${exam.status}
                 </span>
             </div>
         </div>
-        
-        ${canEdit ? `
-            <div class="flex gap-2 pt-3 border-t border-slate-200 dark:border-slate-600">
-                <button class="flex-1 text-sm text-indigo-600 hover:text-indigo-800 p-2 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors" onclick="editExam('${exam.id}')">
-                    <i class="fas fa-edit mr-1"></i>Редактировать
-                </button>
-                <button class="flex-1 text-sm text-red-600 hover:text-red-800 p-2 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors" onclick="deleteExam('${exam.id}')">
-                    <i class="fas fa-trash mr-1"></i>Удалить
-                </button>
-            </div>
-        ` : ''}
     `;
     
     return card;
@@ -613,52 +558,37 @@ function createMobileExamCard(exam) {
  */
 function createExamRow(exam) {
     const row = document.createElement('tr');
-    row.className = 'border-b border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700';
+    row.className = 'border-b border-gray-200 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-700';
     
     const examDate = new Date(exam.date);
     const isUpcoming = examDate > new Date();
     
-    const currentUser = getCurrentUser();
-    const canEdit = currentUser && (currentUser.role === 'teacher' || currentUser.role === 'admin');
-    
     row.innerHTML = `
-        <td class="p-4 text-slate-800 dark:text-slate-200">
+        <td class="p-4 text-gray-800 dark:text-gray-200">
             <div class="font-medium">${formatDate(examDate)}</div>
-            ${isUpcoming ? '<div class="text-xs text-indigo-600 dark:text-indigo-400">Предстоящий</div>' : ''}
+            ${isUpcoming ? '<div class="text-xs text-blue-600 dark:text-blue-400">Предстоящий</div>' : ''}
         </td>
-        <td class="p-4 text-slate-800 dark:text-slate-200">
+        <td class="p-4 text-gray-800 dark:text-gray-200">
             <div class="font-medium">${exam.subject}</div>
         </td>
-        <td class="p-4 text-slate-800 dark:text-slate-200">${exam.teacher}</td>
-        <td class="p-4 text-slate-800 dark:text-slate-200">
+        <td class="p-4 text-gray-800 dark:text-gray-200">${exam.teacher}</td>
+        <td class="p-4 text-gray-800 dark:text-gray-200">
             <div class="flex items-center">
                 <i class="fas fa-door-open mr-2 text-purple-500"></i>
                 ${exam.room}
             </div>
         </td>
-        <td class="p-4 text-slate-800 dark:text-slate-200">
+        <td class="p-4 text-gray-800 dark:text-gray-200">
             <div class="flex items-center">
-                <i class="far fa-clock mr-2 text-indigo-500"></i>
+                <i class="far fa-clock mr-2 text-blue-500"></i>
                 ${exam.time}
             </div>
         </td>
-        <td class="p-4 text-slate-800 dark:text-slate-200">${exam.groups}</td>
+        <td class="p-4 text-gray-800 dark:text-gray-200">${exam.groups}</td>
         <td class="p-4">
             <span class="px-3 py-1 bg-yellow-100 dark:bg-yellow-900 text-yellow-800 dark:text-yellow-300 rounded-full text-xs font-medium">
                 ${exam.status}
             </span>
-        </td>
-        <td class="p-4">
-            ${canEdit ? `
-                <div class="flex gap-1">
-                    <button class="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors" onclick="editExam('${exam.id}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors" onclick="deleteExam('${exam.id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            ` : '<span class="text-slate-400">—</span>'}
         </td>
     `;
     
@@ -686,76 +616,4 @@ function updateAdminUI() {
     if (studentsCountEl) studentsCountEl.textContent = studentsCount;
     if (teachersCountEl) teachersCountEl.textContent = teachersCount;
     if (adminsCountEl) adminsCountEl.textContent = adminsCount;
-    
-    // Обновляем таблицу пользователей
-    updateUsersTable(users);
-}
-
-/**
- * Обновляет таблицу пользователей
- */
-function updateUsersTable(users) {
-    const tableBody = document.getElementById('users-table-body');
-    
-    if (!tableBody) return;
-    
-    // Очищаем таблицу
-    tableBody.innerHTML = '';
-    
-    users.forEach(user => {
-        const row = document.createElement('tr');
-        row.className = 'border-b border-slate-200 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-700';
-        
-        row.innerHTML = `
-            <td class="p-3 text-slate-800 dark:text-slate-200 font-mono text-sm">${user.id}</td>
-            <td class="p-3 text-slate-800 dark:text-slate-200">${user.surname} ${user.name}</td>
-            <td class="p-3 text-slate-800 dark:text-slate-200">${user.email}</td>
-            <td class="p-3">
-                <span class="px-2 py-1 rounded-full text-xs font-medium ${getRoleColorClass(user.role)}">
-                    ${getRoleDisplayName(user.role)}
-                </span>
-            </td>
-            <td class="p-3">
-                <button class="px-2 py-1 rounded-full text-xs font-medium transition-colors ${user.active ? 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300' : 'bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300'}" onclick="toggleUserStatus('${user.id}')">
-                    ${user.active ? 'Активен' : 'Заблокирован'}
-                </button>
-            </td>
-            <td class="p-3">
-                <div class="flex gap-1">
-                    <button class="text-indigo-600 hover:text-indigo-800 p-1 rounded hover:bg-indigo-100 dark:hover:bg-indigo-900 transition-colors" onclick="editUser('${user.id}')">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button class="text-red-600 hover:text-red-800 p-1 rounded hover:bg-red-100 dark:hover:bg-red-900 transition-colors" onclick="deleteUser('${user.id}')">
-                        <i class="fas fa-trash"></i>
-                    </button>
-                </div>
-            </td>
-        `;
-        
-        tableBody.appendChild(row);
-    });
-}
-
-/**
- * Получает отображаемое имя роли
- */
-function getRoleDisplayName(role) {
-    const roleNames = {
-        'student': 'Студент',
-        'teacher': 'Преподаватель',
-        'admin': 'Администратор'
-    };
-    return roleNames[role] || role;
-}
-
-/**
- * Получает CSS класс для роли
- */
-function getRoleColorClass(role) {
-    const roleClasses = {
-        'student': 'bg-indigo-100 text-indigo-800 dark:bg-indigo-900 dark:text-indigo-300',
-        'teacher': 'bg-emerald-100 text-emerald-800 dark:bg-emerald-900 dark:text-emerald-300',
-        'admin': 'bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-300'
-    };
-    return roleClasses[role] || 'bg-slate-100 text-slate-800 dark:bg-slate-900 dark:text-slate-300';
 }
