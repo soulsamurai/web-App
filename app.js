@@ -1,9 +1,12 @@
 /**
- * Главный модуль приложения с полным функционалом
+ * Главный модуль приложения с расширенным функционалом
  */
 
 let currentWeekOffset = 0;
 let currentEditingLesson = null;
+let currentEditingConsultation = null;
+let currentEditingExam = null;
+let currentView = 'week'; // 'week' или 'month'
 
 /**
  * Инициализация приложения
@@ -142,44 +145,90 @@ function initializeEventListeners() {
     
     // Профиль пользователя
     const userProfileBtn = document.getElementById('user-profile-btn');
+    const profileLink = document.getElementById('profile-link');
     const logoutBtn = document.getElementById('logout-btn');
     
     if (userProfileBtn) {
         userProfileBtn.addEventListener('click', toggleUserMenu);
     }
     
+    if (profileLink) {
+        profileLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            showProfileModal();
+        });
+    }
+    
     if (logoutBtn) {
         logoutBtn.addEventListener('click', handleLogout);
     }
     
-    // Навигация по неделям
-    const prevWeekBtn = document.getElementById('prev-week');
-    const nextWeekBtn = document.getElementById('next-week');
+    // Навигация по времени
+    const prevPeriodBtn = document.getElementById('prev-period');
+    const nextPeriodBtn = document.getElementById('next-period');
+    const currentDayBtn = document.getElementById('current-day-btn');
     const currentWeekBtn = document.getElementById('current-week-btn');
     
-    if (prevWeekBtn) {
-        prevWeekBtn.addEventListener('click', () => {
-            currentWeekOffset--;
+    if (prevPeriodBtn) {
+        prevPeriodBtn.addEventListener('click', () => {
+            if (currentView === 'week') {
+                currentWeekOffset--;
+            } else {
+                currentWeekOffset -= 4; // Предыдущий месяц
+            }
             updateScheduleUI();
-            updateWeekDisplay();
+            updatePeriodDisplay();
         });
     }
     
-    if (nextWeekBtn) {
-        nextWeekBtn.addEventListener('click', () => {
-            currentWeekOffset++;
+    if (nextPeriodBtn) {
+        nextPeriodBtn.addEventListener('click', () => {
+            if (currentView === 'week') {
+                currentWeekOffset++;
+            } else {
+                currentWeekOffset += 4; // Следующий месяц
+            }
             updateScheduleUI();
-            updateWeekDisplay();
+            updatePeriodDisplay();
+        });
+    }
+    
+    if (currentDayBtn) {
+        currentDayBtn.addEventListener('click', () => {
+            currentWeekOffset = 0;
+            currentView = 'week';
+            updateViewToggle();
+            updateScheduleUI();
+            updatePeriodDisplay();
+            // Прокрутка к текущему дню
+            scrollToCurrentDay();
         });
     }
     
     if (currentWeekBtn) {
         currentWeekBtn.addEventListener('click', () => {
             currentWeekOffset = 0;
+            currentView = 'week';
+            updateViewToggle();
             updateScheduleUI();
-            updateWeekDisplay();
+            updatePeriodDisplay();
         });
     }
+    
+    // Переключатели вида
+    const viewToggles = document.querySelectorAll('.view-toggle');
+    viewToggles.forEach(toggle => {
+        toggle.addEventListener('click', () => {
+            const view = toggle.getAttribute('data-view');
+            if (view !== currentView) {
+                currentView = view;
+                currentWeekOffset = 0; // Сброс к текущему периоду
+                updateViewToggle();
+                updateScheduleUI();
+                updatePeriodDisplay();
+            }
+        });
+    });
     
     // Кнопки добавления
     const addLessonBtn = document.getElementById('add-lesson-btn');
@@ -191,11 +240,41 @@ function initializeEventListeners() {
     }
     
     if (addConsultationBtn) {
-        addConsultationBtn.addEventListener('click', () => showToast('Функция добавления консультации в разработке', 'info'));
+        addConsultationBtn.addEventListener('click', () => showConsultationModal());
     }
     
     if (addExamBtn) {
-        addExamBtn.addEventListener('click', () => showToast('Функция добавления экзамена в разработке', 'info'));
+        addExamBtn.addEventListener('click', () => showExamModal());
+    }
+    
+    // Модальные окна
+    initializeModalEventListeners();
+    
+    // Закрытие меню при клике вне его
+    document.addEventListener('click', (e) => {
+        const userMenu = document.getElementById('user-menu');
+        const userProfileBtn = document.getElementById('user-profile-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+        
+        if (userMenu && userProfileBtn && !userProfileBtn.contains(e.target) && !userMenu.contains(e.target)) {
+            userMenu.classList.add('hidden');
+        }
+        
+        if (mobileMenu && mobileMenuBtn && !mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
+            mobileMenu.classList.add('hidden');
+        }
+    });
+}
+
+/**
+ * Инициализирует обработчики модальных окон
+ */
+function initializeModalEventListeners() {
+    // Модальное окно профиля
+    const profileClose = document.getElementById('profile-close');
+    if (profileClose) {
+        profileClose.addEventListener('click', hideProfileModal);
     }
     
     // Модальное окно занятия
@@ -218,21 +297,76 @@ function initializeEventListeners() {
         });
     }
     
-    // Закрытие меню при клике вне его
-    document.addEventListener('click', (e) => {
-        const userMenu = document.getElementById('user-menu');
-        const userProfileBtn = document.getElementById('user-profile-btn');
-        const mobileMenu = document.getElementById('mobile-menu');
-        const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-        
-        if (userMenu && userProfileBtn && !userProfileBtn.contains(e.target) && !userMenu.contains(e.target)) {
-            userMenu.classList.add('hidden');
-        }
-        
-        if (mobileMenu && mobileMenuBtn && !mobileMenuBtn.contains(e.target) && !mobileMenu.contains(e.target)) {
-            mobileMenu.classList.add('hidden');
+    // Модальное окно консультации
+    const consultationCancel = document.getElementById('consultation-cancel');
+    const consultationSave = document.getElementById('consultation-save');
+    const consultationForm = document.getElementById('consultation-form');
+    
+    if (consultationCancel) {
+        consultationCancel.addEventListener('click', hideConsultationModal);
+    }
+    
+    if (consultationSave) {
+        consultationSave.addEventListener('click', saveConsultationFromModal);
+    }
+    
+    if (consultationForm) {
+        consultationForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveConsultationFromModal();
+        });
+    }
+    
+    // Модальное окно экзамена
+    const examCancel = document.getElementById('exam-cancel');
+    const examSave = document.getElementById('exam-save');
+    const examForm = document.getElementById('exam-form');
+    
+    if (examCancel) {
+        examCancel.addEventListener('click', hideExamModal);
+    }
+    
+    if (examSave) {
+        examSave.addEventListener('click', saveExamFromModal);
+    }
+    
+    if (examForm) {
+        examForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            saveExamFromModal();
+        });
+    }
+}
+
+/**
+ * Обновляет переключатель вида
+ */
+function updateViewToggle() {
+    const viewToggles = document.querySelectorAll('.view-toggle');
+    viewToggles.forEach(toggle => {
+        const view = toggle.getAttribute('data-view');
+        if (view === currentView) {
+            toggle.classList.add('active', 'bg-indigo-500', 'text-white');
+            toggle.classList.remove('text-slate-600', 'dark:text-slate-400');
+        } else {
+            toggle.classList.remove('active', 'bg-indigo-500', 'text-white');
+            toggle.classList.add('text-slate-600', 'dark:text-slate-400');
         }
     });
+}
+
+/**
+ * Прокручивает к текущему дню
+ */
+function scrollToCurrentDay() {
+    const today = new Date().getDay();
+    const dayIndex = today === 0 ? 6 : today - 1; // Преобразуем воскресенье в субботу
+    
+    // Для мобильной версии
+    const mobileDayCards = document.querySelectorAll('.mobile-day-card');
+    if (mobileDayCards[dayIndex]) {
+        mobileDayCards[dayIndex].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
 }
 
 /**
@@ -242,6 +376,37 @@ function toggleMobileMenu() {
     const mobileMenu = document.getElementById('mobile-menu');
     if (mobileMenu) {
         mobileMenu.classList.toggle('hidden');
+    }
+}
+
+/**
+ * Показывает модальное окно профиля
+ */
+function showProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    const user = getCurrentUser();
+    
+    if (!modal || !user) return;
+    
+    // Заполняем данные профиля
+    document.getElementById('profile-name').textContent = `${user.surname} ${user.name}`;
+    document.getElementById('profile-email').textContent = user.email;
+    document.getElementById('profile-role').textContent = getRoleDisplayName(user.role);
+    document.getElementById('profile-id').textContent = user.id;
+    document.getElementById('profile-created').textContent = formatDate(new Date(user.createdAt));
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Скрывает модальное окно профиля
+ */
+function hideProfileModal() {
+    const modal = document.getElementById('profile-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
     }
 }
 
@@ -281,6 +446,76 @@ function hideLessonModal() {
 }
 
 /**
+ * Показывает модальное окно консультации
+ */
+function showConsultationModal(consultation = null) {
+    const modal = document.getElementById('consultation-modal');
+    const title = document.getElementById('consultation-modal-title');
+    
+    if (!modal) return;
+    
+    currentEditingConsultation = consultation;
+    
+    if (consultation) {
+        title.textContent = 'Редактировать консультацию';
+        fillConsultationForm(consultation);
+    } else {
+        title.textContent = 'Добавить консультацию';
+        clearConsultationForm();
+    }
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Скрывает модальное окно консультации
+ */
+function hideConsultationModal() {
+    const modal = document.getElementById('consultation-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        currentEditingConsultation = null;
+    }
+}
+
+/**
+ * Показывает модальное окно экзамена
+ */
+function showExamModal(exam = null) {
+    const modal = document.getElementById('exam-modal');
+    const title = document.getElementById('exam-modal-title');
+    
+    if (!modal) return;
+    
+    currentEditingExam = exam;
+    
+    if (exam) {
+        title.textContent = 'Редактировать экзамен';
+        fillExamForm(exam);
+    } else {
+        title.textContent = 'Добавить экзамен';
+        clearExamForm();
+    }
+    
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+}
+
+/**
+ * Скрывает модальное окно экзамена
+ */
+function hideExamModal() {
+    const modal = document.getElementById('exam-modal');
+    if (modal) {
+        modal.classList.add('hidden');
+        document.body.style.overflow = '';
+        currentEditingExam = null;
+    }
+}
+
+/**
  * Заполняет форму занятия
  */
 function fillLessonForm(lesson) {
@@ -304,6 +539,58 @@ function clearLessonForm() {
     document.getElementById('lesson-day').value = '0';
     document.getElementById('lesson-time').value = '8:00-9:30';
     document.getElementById('lesson-groups').value = '';
+}
+
+/**
+ * Заполняет форму консультации
+ */
+function fillConsultationForm(consultation) {
+    document.getElementById('consultation-subject').value = consultation.subject || '';
+    document.getElementById('consultation-teacher').value = consultation.teacher || '';
+    document.getElementById('consultation-date').value = consultation.date ? consultation.date.split('T')[0] : '';
+    document.getElementById('consultation-time').value = consultation.time || '';
+    document.getElementById('consultation-room').value = consultation.room || '';
+    document.getElementById('consultation-groups').value = consultation.groups || '';
+    document.getElementById('consultation-comment').value = consultation.comment || '';
+}
+
+/**
+ * Очищает форму консультации
+ */
+function clearConsultationForm() {
+    document.getElementById('consultation-subject').value = '';
+    document.getElementById('consultation-teacher').value = '';
+    document.getElementById('consultation-date').value = '';
+    document.getElementById('consultation-time').value = '';
+    document.getElementById('consultation-room').value = '';
+    document.getElementById('consultation-groups').value = '';
+    document.getElementById('consultation-comment').value = '';
+}
+
+/**
+ * Заполняет форму экзамена
+ */
+function fillExamForm(exam) {
+    document.getElementById('exam-subject').value = exam.subject || '';
+    document.getElementById('exam-teacher').value = exam.teacher || '';
+    document.getElementById('exam-date').value = exam.date ? exam.date.split('T')[0] : '';
+    document.getElementById('exam-time').value = exam.time || '';
+    document.getElementById('exam-room').value = exam.room || '';
+    document.getElementById('exam-groups').value = exam.groups || '';
+    document.getElementById('exam-status').value = exam.status || 'Запланирован';
+}
+
+/**
+ * Очищает форму экзамена
+ */
+function clearExamForm() {
+    document.getElementById('exam-subject').value = '';
+    document.getElementById('exam-teacher').value = '';
+    document.getElementById('exam-date').value = '';
+    document.getElementById('exam-time').value = '';
+    document.getElementById('exam-room').value = '';
+    document.getElementById('exam-groups').value = '';
+    document.getElementById('exam-status').value = 'Запланирован';
 }
 
 /**
@@ -338,6 +625,74 @@ function saveLessonFromModal() {
     
     hideLessonModal();
     updateScheduleUI();
+}
+
+/**
+ * Сохраняет консультацию из модального окна
+ */
+function saveConsultationFromModal() {
+    const consultationData = {
+        subject: document.getElementById('consultation-subject').value.trim(),
+        teacher: document.getElementById('consultation-teacher').value.trim(),
+        date: new Date(document.getElementById('consultation-date').value).toISOString(),
+        time: document.getElementById('consultation-time').value,
+        room: document.getElementById('consultation-room').value.trim(),
+        groups: document.getElementById('consultation-groups').value.trim(),
+        comment: document.getElementById('consultation-comment').value.trim()
+    };
+    
+    // Валидация
+    if (!consultationData.subject || !consultationData.teacher || !consultationData.date || !consultationData.time || !consultationData.room) {
+        showToast('Заполните все обязательные поля', 'error');
+        return;
+    }
+    
+    if (currentEditingConsultation) {
+        // Редактирование
+        updateConsultation(currentEditingConsultation.id, consultationData);
+        showToast('Консультация успешно обновлена', 'success');
+    } else {
+        // Добавление
+        addConsultation(consultationData);
+        showToast('Консультация успешно добавлена', 'success');
+    }
+    
+    hideConsultationModal();
+    updateConsultationsUI();
+}
+
+/**
+ * Сохраняет экзамен из модального окна
+ */
+function saveExamFromModal() {
+    const examData = {
+        subject: document.getElementById('exam-subject').value.trim(),
+        teacher: document.getElementById('exam-teacher').value.trim(),
+        date: new Date(document.getElementById('exam-date').value).toISOString(),
+        time: document.getElementById('exam-time').value,
+        room: document.getElementById('exam-room').value.trim(),
+        groups: document.getElementById('exam-groups').value.trim(),
+        status: document.getElementById('exam-status').value
+    };
+    
+    // Валидация
+    if (!examData.subject || !examData.teacher || !examData.date || !examData.time || !examData.room) {
+        showToast('Заполните все обязательные поля', 'error');
+        return;
+    }
+    
+    if (currentEditingExam) {
+        // Редактирование
+        updateExam(currentEditingExam.id, examData);
+        showToast('Экзамен успешно обновлен', 'success');
+    } else {
+        // Добавление
+        addExam(examData);
+        showToast('Экзамен успешно добавлен', 'success');
+    }
+    
+    hideExamModal();
+    updateExamsUI();
 }
 
 /**
@@ -506,3 +861,51 @@ window.deleteLesson = function(id) {
         showToast('Занятие удалено', 'success');
     }
 };
+
+window.editConsultation = function(id) {
+    const consultation = getConsultationById(id);
+    if (consultation) {
+        showConsultationModal(consultation);
+    }
+};
+
+window.deleteConsultation = function(id) {
+    if (confirm('Вы уверены, что хотите удалить эту консультацию?')) {
+        removeConsultation(id);
+        updateConsultationsUI();
+        showToast('Консультация удалена', 'success');
+    }
+};
+
+window.editExam = function(id) {
+    const exam = getExamById(id);
+    if (exam) {
+        showExamModal(exam);
+    }
+};
+
+window.deleteExam = function(id) {
+    if (confirm('Вы уверены, что хотите удалить этот экзамен?')) {
+        removeExam(id);
+        updateExamsUI();
+        showToast('Экзамен удален', 'success');
+    }
+};
+
+window.editUser = function(id) {
+    showToast('Функция редактирования пользователя в разработке', 'info');
+};
+
+window.deleteUser = function(id) {
+    if (confirm('Вы уверены, что хотите удалить этого пользователя?')) {
+        removeUser(id);
+        updateAdminUI();
+        showToast('Пользователь удален', 'success');
+    }
+};
+
+window.toggleUserStatus = function(id) {
+    toggleUserActiveStatus(id);
+    updateAdminUI();
+    showToast('Статус пользователя изменен', 'success');
+}
