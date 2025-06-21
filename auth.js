@@ -1,5 +1,5 @@
 /**
- * Модуль аутентификации с улучшенной безопасностью
+ * Модуль аутентификации с расширенным функционалом
  */
 
 // Ключи для хранения данных
@@ -63,6 +63,14 @@ function getUsers() {
 function getUserByEmail(email) {
     const users = getUsers();
     return users.find(user => user.email.toLowerCase() === email.toLowerCase()) || null;
+}
+
+/**
+ * Получает пользователя по ID
+ */
+function getUserById(id) {
+    const users = getUsers();
+    return users.find(user => user.id === id) || null;
 }
 
 /**
@@ -348,6 +356,54 @@ function changePassword(currentPassword, newPassword) {
         success: true,
         message: 'Пароль успешно изменен'
     };
+}
+
+/**
+ * Удаляет пользователя (только для админов)
+ */
+function removeUser(id) {
+    const currentUser = getCurrentUser();
+    if (!currentUser || currentUser.role !== 'admin') {
+        throw new Error('Недостаточно прав для выполнения операции');
+    }
+    
+    if (currentUser.id === id) {
+        throw new Error('Нельзя удалить самого себя');
+    }
+    
+    const users = getUsers();
+    const filteredUsers = users.filter(user => user.id !== id);
+    setStorageItem(USERS_KEY, filteredUsers);
+    
+    return true;
+}
+
+/**
+ * Переключает статус активности пользователя
+ */
+function toggleUserActiveStatus(id) {
+    const currentUser = getCurrentUser();
+    if (!currentUser || currentUser.role !== 'admin') {
+        throw new Error('Недостаточно прав для выполнения операции');
+    }
+    
+    if (currentUser.id === id) {
+        throw new Error('Нельзя изменить статус самого себя');
+    }
+    
+    const users = getUsers();
+    const userIndex = users.findIndex(u => u.id === id);
+    
+    if (userIndex === -1) {
+        throw new Error('Пользователь не найден');
+    }
+    
+    users[userIndex].active = !users[userIndex].active;
+    users[userIndex].updatedAt = new Date().toISOString();
+    
+    setStorageItem(USERS_KEY, users);
+    
+    return users[userIndex];
 }
 
 // Инициализация при загрузке
